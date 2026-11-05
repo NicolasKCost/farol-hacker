@@ -556,6 +556,16 @@ codigo.addEventListener('keydown', e => {
   }
 });
 btnRun.addEventListener('click', correr);
+// colar uma linha só (ex.: copiada do Terminal): tirar a mudança de linha do fim,
+// para não partir o texto entre aspas
+codigo.addEventListener('paste', e => {
+  const t = (e.clipboardData && e.clipboardData.getData('text')) || '';
+  const limpo = t.replace(/\r/g, '').replace(/^\n+|\n+$/g, '');
+  if (limpo === t || limpo.includes('\n')) return;
+  e.preventDefault();
+  codigo.setRangeText(limpo, codigo.selectionStart, codigo.selectionEnd, 'end');
+  codigo.dispatchEvent(new Event('input'));
+});
 
 const CODIGO_INICIAL =
 '# Editor de Python deste computador.\n' +

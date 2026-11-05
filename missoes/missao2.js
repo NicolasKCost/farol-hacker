@@ -50,6 +50,8 @@ const LOG = eventos.map(([seg, txt]) => {
 }).join('\n') + '\n';
 const LINHAS = LOG.split('\n').length - 1;
 const FALHAS = (LOG.match(/Failed password/g) || []).length;
+const EXEMPLO = LOG.split('\n').find(l => l.includes('Failed password'));   // a 1.ª linha que o grep Failed mostra
+const EX_P = EXEMPLO.split(/\s+/);
 
 /* ---------- ataque em direto no passo final ---------- */
 let ataque = null;
@@ -227,25 +229,38 @@ function pararAtaque() { clearInterval(ataque); ataque = null; }
     },
     {
       facto: 'posicao',
+      abre: 'terminal',
       licao: true,
       titulo: 'Lição: cortar uma linha em pedaços',
-      historia: 'Para saber de onde veio cada falha, tens de tirar o <b>endereço IP</b> de cada linha. É como recortar uma palavra de uma frase.',
-      aprende: '<code>linha.split()</code> corta um texto <b>nos espaços</b> e devolve uma <b>lista</b> de pedaços.<br>Cada pedaço tem um número de <b>posição</b> — e, atenção, <b>conta-se a partir do 0</b>, não do 1:' +
-        '<div class="pecas"><span><i>0</i>Mar</span><span><i>1</i>20</span><span><i>2</i>02:51:03</span><span><i>3</i>farol</span><span class="mais">…</span></div>' +
-        'Para ir buscar um pedaço, escreve-se o nome da lista e a posição entre parênteses retos: <code>partes[0]</code> é <i>Mar</i>, <code>partes[1]</code> é <i>20</i>, e assim por diante.',
+      historia: 'Para saber de onde veio cada falha, tens de tirar o <b>endereço IP</b> de cada linha. É como recortar uma palavra de uma frase.<br>Antes de pores o Python a fazer isto às 702 linhas, aprende com <b>uma só</b>. Vais <b>copiar uma linha de falha do Terminal e colá-la no Python</b>, como quem copia uma frase de um site para uma mensagem.',
+      aprende: '<code>linha.split()</code> corta um texto <b>nos espaços</b> e devolve uma <b>lista</b> de pedaços.<br>Cada pedaço tem um número de <b>posição</b> e, atenção, <b>conta-se a partir do 0</b>, não do 1:' +
+        `<div class="pecas"><span><i>0</i>${EX_P[0]}</span><span><i>1</i>${EX_P[1]}</span><span><i>2</i>${EX_P[2]}</span><span><i>3</i>${EX_P[3]}</span><span class="mais">…</span></div>` +
+        `Para ir buscar um pedaço, escreve-se o nome da lista e a posição entre parênteses retos: <code>partes[0]</code> é <i>${EX_P[0]}</i>, <code>partes[1]</code> é <i>${EX_P[1]}</i>, e assim por diante.`,
       explicaTitulo: 'O programa, linha a linha',
       explica: [
-        ['linha = "Mar 20 02:51:03 farol sshd[2231]: Failed password for marta from 10.0.0.66 port 51234 ssh2"', 'Uma linha copiada do registo, guardada na caixa <b>linha</b>.'],
+        ['linha = "???"', 'A caixa <b>linha</b> vai guardar a linha que copiares do Terminal. Os <b>???</b> são o sítio onde a colas, <b>entre as aspas</b>.'],
         ['partes = linha.split()', 'Corta a linha nos espaços e guarda a lista de pedaços na caixa <b>partes</b>.'],
         ['print(partes)', 'Mostra a lista toda, para contares as posições.'],
         ['print("IP:", partes[0])', 'Mostra o pedaço da posição <b>0</b>. É este número que vais mudar.']
       ],
-      tarefa: '<ol><li>Carrega em <b>▶ Executar</b> e olha para a lista que aparece.</li><li>Conta os pedaços até chegares ao IP (<b>10.0.0.66</b>), começando no <b>0</b>: Mar é o 0, 20 é o 1…</li><li>Na última linha, troca o <b>0</b> de <code>partes[0]</code> por esse número e executa.</li></ol>',
-      antesDepois: ['print("IP:", partes[<mark>0</mark>])', 'print("IP:", partes[<mark>?</mark>])   ← o número que contaste'],
-      pista: 'Conta assim: Mar (0), 20 (1), 02:51:03 (2), farol (3), sshd[2231]: (4), Failed (5), password (6), for (7), marta (8), from (9)… e o IP vem logo a seguir. Se aparecer <i>IndexError</i>, o número é maior do que a lista.',
-      feito: 'O IP está na posição <b>10</b> — é o 11.º pedaço, porque se conta a partir do 0.<br>Em todas as linhas de falha do registo o IP está no mesmo sítio. Por isso, <code>linha.split()[10]</code> tira o IP de <b>qualquer</b> uma delas.',
+      tarefa: '<p><b>Parte 1: copiar uma linha do Terminal</b></p><ol>' +
+        '<li>Clica em <b>Terminal</b> na barra de tarefas. As linhas do <code>grep Failed auth.log</code> ainda lá estão. Se não estiverem, escreve esse comando outra vez.</li>' +
+        `<li>Escolhe uma linha com <b>Failed</b>, por exemplo a primeira: <code>${EXEMPLO.slice(0, 22)}…</code></li>` +
+        '<li>Carrega com o rato <b>antes da primeira letra</b> da linha (no “Mar”) e, <b>sem largar o botão</b>, arrasta até ao fim da linha (o “ssh2”). Se a janela for estreita, a linha ocupa duas linhas no ecrã: arrasta até ao “ssh2” na mesma. O texto fica pintado.</li>' +
+        '<li>Carrega em <kbd>Ctrl</kbd>+<kbd>C</kbd> para copiar. No Mac é <kbd>⌘</kbd>+<kbd>C</kbd>.</li></ol>' +
+        '<p><b>Parte 2: colar no Python</b></p><ol>' +
+        '<li>Abre o <b>Python</b>. Na linha 2, clica <b>logo a seguir aos ???</b> (entre o último ? e as aspas) e carrega <b>3 vezes</b> em <kbd>⌫ Backspace</kbd> para os apagar. Fica <code>linha = ""</code>, com o cursor entre as aspas.</li>' +
+        '<li>Carrega em <kbd>Ctrl</kbd>+<kbd>V</kbd> para colar. Confirma que a linha ficou entre as aspas: <code>linha = "Mar …ssh2"</code>.</li>' +
+        '<li>Carrega em <b>▶ Executar</b> e olha para a lista que aparece.</li>' +
+        '<li>Conta os pedaços até chegares ao IP (o número a seguir a <b>from</b>), começando no <b>0</b>.</li>' +
+        '<li>Na última linha, troca o <b>0</b> de <code>partes[0]</code> por esse número e executa outra vez.</li></ol>' +
+        '<p>No telemóvel é difícil selecionar texto. Usa <b>✍ Escrever por mim</b>, que cola a primeira linha por ti.</p>',
+      antesDepois: ['linha = "<mark>???</mark>"', `linha = "<mark>${EXEMPLO.slice(0, 30)}…</mark>"   ← a linha que colaste`],
+      pista: `Se os <b>???</b> ainda lá estiverem, a lista mostra só <code>['???']</code>: ainda não colaste a linha.<br>Para contar: ${EX_P[0]} (0), ${EX_P[1]} (1), a hora (2), farol (3), sshd[…]: (4), Failed (5), password (6), for (7), o nome da conta (8), from (9)… e o IP vem logo a seguir. Se aparecer <i>IndexError</i>, o número é maior do que a lista.`,
+      feito: 'O IP está na posição <b>10</b>. É o 11.º pedaço, porque se conta a partir do 0.<br>Em todas as linhas de falha do registo o IP está no mesmo sítio. Por isso, <code>linha.split()[10]</code> tira o IP de <b>qualquer</b> uma delas. É isso que vais usar a seguir, nas 702.',
       codigo:
-'linha = "Mar 20 02:51:03 farol sshd[2231]: Failed password for marta from 10.0.0.66 port 51234 ssh2"\n\n' +
+'# 👉 Cola aqui, entre as aspas, a linha que copiaste do Terminal\n' +
+'linha = "???"\n\n' +
 '# split() corta o texto nos espaços e devolve uma lista de pedaços\n' +
 'partes = linha.split()\n' +
 'print(partes)\n\n' +
@@ -253,7 +268,8 @@ function pararAtaque() { clearInterval(ataque); ataque = null; }
 '# 👉 troca o 0 pela posição do endereço IP\n' +
 'print("IP:", partes[0])\n',
       solucao:
-'linha = "Mar 20 02:51:03 farol sshd[2231]: Failed password for marta from 10.0.0.66 port 51234 ssh2"\n\n' +
+'# A linha copiada do Terminal (a primeira do grep Failed)\n' +
+`linha = "${EXEMPLO}"\n\n` +
 '# split() corta o texto nos espaços e devolve uma lista de pedaços\n' +
 'partes = linha.split()\n' +
 'print(partes)\n\n' +
@@ -390,7 +406,7 @@ function pararAtaque() { clearInterval(ataque); ataque = null; }
     const f = [];
     if ((out.match(/A investigar:/g) || []).length >= 4) f.push('lista');
     if (out.includes('Tentativas falhadas: ' + FALHAS)) f.push('contou');
-    if (/IP: 10\.0\.0\.66/.test(out)) f.push('posicao');
+    if (/IP: \d+\.\d+\.\d+\.\d+/.test(out)) f.push('posicao');
     if (new RegExp('10\\.0\\.0\\.66 → ' + ATAQUE + ' tentativas').test(out)) f.push('top');
     return f;
   },
