@@ -11,8 +11,8 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0f0c'/%3E%3Ctext x='5' y='23' font-family='monospace' font-size='18' font-weight='700' fill='%2339ff88'%3E%3E_%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=31">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;600;700&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=32">
 </head>
 <body>
 
@@ -165,21 +165,136 @@
   <div class="boot-saltar">Clica ou carrega numa tecla para saltar</div>
 </div>
 
-<!-- Ecrã inicial -->
-<div class="ecra" id="ecraIntro">
-  <div class="cartao">
-    <p class="selo" id="introSelo">MISSÃO 1</p>
-    <h1 id="introTitulo">O computador do sótão</h1>
-    <div id="introTexto"></div>
-    <ul class="info">
-      <li id="introDuracao">⏱ ~15 minutos</li><li>🐍 Python a sério, no navegador</li><li>💸 Grátis, sem instalar nada</li>
-    </ul>
-    <div class="botoes">
-      <button class="btn" id="btnComecar">Ligar o computador</button>
-      <button class="btn alt" id="btnDoZero" hidden>Começar do zero</button>
+<!-- Ecrã inicial: o que é o jogo (o computador ainda está desligado) -->
+<div class="ecra entrada" id="ecraIntro">
+  <div class="ent">
+    <header class="ent-cab">
+      <div class="ent-logo"><span class="ent-luz"></span>FAROL</div>
+      <p class="ent-sub">Um jogo de investigação para aprender segurança informática, terminal e Python, mesmo que nunca tenhas programado.</p>
+    </header>
+
+    <div class="ent-grelha">
+      <!-- a história, em rabiscos animados -->
+      <section class="rab" aria-label="A história, em desenhos">
+        <svg class="rab-svg" id="rabSvg" viewBox="0 0 400 260" role="img" aria-labelledby="rabLeg">
+          <defs>
+            <filter id="lapis"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="2.6"/></filter>
+          </defs>
+
+          <!-- 1. A Marta e a Vigia -->
+          <g class="cena" data-leg="Lisboa, 2009. A <b>Marta</b> trabalha na <b>Vigia</b>, uma empresa de segurança informática.">
+            <path d="M20 230 L380 230"/>
+            <path d="M150 230 L150 60 L280 60 L280 230"/>
+            <path d="M165 70 L265 70 L265 98 L165 98 Z"/>
+            <path class="am" d="M178 84 Q192 72 206 84 Q192 96 178 84 Z"/>
+            <circle class="am" cx="192" cy="84" r="4"/>
+            <path d="M168 112 h22 v18 h-22 Z M204 112 h22 v18 h-22 Z M240 112 h22 v18 h-22 Z"/>
+            <path d="M168 144 h22 v18 h-22 Z M204 144 h22 v18 h-22 Z M240 144 h22 v18 h-22 Z"/>
+            <path d="M200 230 L200 196 L230 196 L230 230"/>
+            <circle cx="90" cy="150" r="12"/>
+            <path d="M101 146 Q115 150 108 164"/>
+            <path d="M90 162 L90 200 M90 172 L74 188 M90 172 L106 186 M90 200 L80 228 M90 200 L100 228"/>
+            <path d="M318 52 q8 -14 24 -6 q14 -8 22 8 q12 2 6 14 h-50 q-12 -4 -2 -16 Z"/>
+            <text class="esc am" x="211" y="90">VIGIA</text>
+            <text class="esc" x="64" y="252">Marta</text>
+          </g>
+
+          <!-- 2. O servidor FAROL -->
+          <g class="cena" data-leg="O servidor da Vigia chama-se <b>FAROL</b>. Guarda os dados de milhares de clientes.">
+            <path d="M20 236 q20 -10 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0"/>
+            <path d="M180 230 L192 100 L228 100 L240 230 Z"/>
+            <path class="verm" d="M187 170 L233 170 M190 135 L230 135"/>
+            <path d="M196 100 L196 80 L224 80 L224 100"/>
+            <path d="M190 80 L210 62 L230 80"/>
+            <path class="am" d="M226 86 L330 60 M226 94 L330 122 M194 86 L90 60 M194 94 L90 122"/>
+            <path d="M200 198 h20 M200 208 h20 M200 218 h20"/>
+            <path d="M52 160 h24 v30 h-24 Z M57 168 h14 M57 175 h14 M57 182 h10"/>
+            <path d="M326 160 h24 v30 h-24 Z M331 168 h14 M331 175 h14 M331 182 h10"/>
+            <text class="esc am" x="182" y="50">FAROL</text>
+            <text class="esc" x="20" y="215">dados dos clientes</text>
+          </g>
+
+          <!-- 3. Alguém de dentro rouba os dados -->
+          <g class="cena" data-leg="Uma noite, a Marta descobre que <b>alguém de dentro</b> anda a copiar esses dados às escondidas.">
+            <path class="am" d="M330 34 a22 22 0 1 0 20 34 a17 17 0 1 1 -20 -34 Z"/>
+            <path d="M282 230 L290 150 L312 150 L320 230 Z M292 150 L292 136 L310 136 L310 150"/>
+            <path d="M20 230 L380 230"/>
+            <path d="M142 122 Q160 96 178 122 L178 142 Q160 150 142 142 Z"/>
+            <path d="M142 142 L132 228 M178 142 L188 228 M132 228 L188 228"/>
+            <path class="am" d="M152 126 h5 M163 126 h5"/>
+            <path class="verm" d="M282 182 Q244 150 214 170 M214 170 L224 162 M214 170 L226 176"/>
+            <path d="M188 162 h24 v18 h-24 Z"/>
+            <circle cx="60" cy="152" r="11"/>
+            <path d="M60 163 L60 205 M60 205 L52 228 M60 205 L68 228 M60 175 L76 162"/>
+            <circle class="am" cx="84" cy="152" r="9"/>
+            <text class="esc verm" x="44" y="128">?!</text>
+            <text class="esc" x="118" y="86">alguém de dentro</text>
+          </g>
+
+          <!-- 4. O sótão -->
+          <g class="cena" data-leg="Pouco depois, a Marta <b>desaparece</b>. O computador dela fica esquecido num sótão, em Alfama.">
+            <path d="M50 122 L200 30 L350 122"/>
+            <path d="M80 104 L80 230 M320 104 L320 230 M50 230 L350 230"/>
+            <circle cx="200" cy="80" r="14"/>
+            <path d="M186 80 h28 M200 66 v28"/>
+            <path d="M170 230 L170 150 L215 150 L215 230"/>
+            <path d="M178 165 h29 M178 175 h29"/>
+            <circle class="am" cx="192" cy="210" r="5"/>
+            <path d="M80 104 L112 124 M80 104 L80 140 M80 104 L104 132 M94 112 Q92 122 80 124 M104 118 Q98 132 80 134"/>
+            <path d="M240 230 L240 196 L290 196 L290 230 M250 196 L250 172 L284 172 L284 196"/>
+            <path d="M162 146 l7 -6 M222 148 l6 -7 M196 142 l2 -8"/>
+            <path d="M110 150 h32 v36 h-32 Z"/>
+            <text class="esc" x="113" y="166">MAR</text>
+            <text class="esc verm" x="113" y="181">2009</text>
+          </g>
+
+          <!-- 5. Hoje -->
+          <g class="cena" data-leg="Hoje, compras esse computador na <b>Feira da Ladra</b>, por 5 euros. Levas-o para casa… e ligas-o.">
+            <path d="M60 90 L340 90 L340 110 M60 90 L60 110"/>
+            <path class="verm" d="M60 110 q17.5 15 35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0"/>
+            <path d="M74 112 L74 230 M326 112 L326 230 M60 182 L340 182"/>
+            <path d="M182 182 L182 120 L218 120 L218 182 M188 134 h24 M188 143 h24"/>
+            <path class="am" d="M218 130 L242 122 L254 133 L230 141 Z"/>
+            <path d="M104 182 L104 160 L146 160 L146 182 M114 160 L108 146"/>
+            <circle cx="132" cy="171" r="6"/>
+            <path d="M272 182 q-6 -24 8 -28 q14 4 8 28"/>
+            <circle class="am" cx="346" cy="44" r="13"/>
+            <path class="am" d="M346 22 v-8 M346 74 v-8 M324 44 h-8 M376 44 h-8"/>
+            <text class="esc am" x="232" y="137">5€</text>
+            <text class="esc" x="110" y="80">Feira da Ladra</text>
+          </g>
+        </svg>
+        <p class="rab-leg" id="rabLeg" aria-live="polite"></p>
+        <div class="rab-pontos" id="rabPontos"></div>
+      </section>
+
+      <!-- o que é o jogo + a missão -->
+      <section class="ent-info">
+        <h2>O que é o FAROL?</h2>
+        <p>É um jogo no navegador. Ligas um computador antigo, investigas o que ficou lá escondido e, pelo caminho, aprendes o que os profissionais de segurança usam todos os dias.</p>
+        <ul class="ent-aprende">
+          <li><span>🖥️</span><div><b>Terminal Linux</b><br>Mexer num computador só com comandos escritos.</div></li>
+          <li><span>🔐</span><div><b>Segurança</b><br>Encontrar pistas, perceber um ataque e defender-te dele.</div></li>
+          <li><span>🐍</span><div><b>Python</b><br>Escrever pequenos programas que fazem o trabalho por ti.</div></li>
+        </ul>
+        <p class="ent-nota">Não precisas de saber nada. Cada passo é explicado, e há sempre uma pista se ficares preso.</p>
+
+        <div class="ent-missao">
+          <p class="selo" id="introSelo">MISSÃO 1</p>
+          <h3 id="introTitulo">O computador do sótão</h3>
+          <div id="introTexto"></div>
+          <ul class="info">
+            <li id="introDuracao">⏱ ~15 minutos</li><li>🐍 Python a sério, no navegador</li><li>💸 Grátis, sem instalar nada</li>
+          </ul>
+          <div class="botoes">
+            <button class="btn" id="btnComecar">⏻ Ligar o computador</button>
+            <button class="btn alt" id="btnDoZero" hidden>Começar do zero</button>
+          </div>
+          <div class="missoes-lista" id="missoesLista"></div>
+        </div>
+        <p class="mini">Tudo é simulado: ficheiros, rede e pessoas são inventados. Nada sai do teu navegador.</p>
+      </section>
     </div>
-    <div class="missoes-lista" id="missoesLista"></div>
-    <p class="mini">Tudo é simulado: ficheiros, rede e pessoas são inventados. Nada sai do teu navegador.</p>
   </div>
 </div>
 
@@ -202,9 +317,10 @@
   </div>
 </div>
 
-<script src="missoes/missao1.js?v=31"></script>
-<script src="missoes/missao2.js?v=31"></script>
-<script src="ambiente.js?v=31"></script>
-<script src="jogo.js?v=31"></script>
+<script src="missoes/missao1.js?v=32"></script>
+<script src="missoes/missao2.js?v=32"></script>
+<script src="ambiente.js?v=32"></script>
+<script src="jogo.js?v=32"></script>
+<script src="entrada.js?v=32"></script>
 </body>
 </html>
