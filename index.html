@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=17">
+<link rel="stylesheet" href="style.css?v=18">
 </head>
 <body>
 
@@ -167,16 +167,17 @@
 <!-- Ecrã inicial -->
 <div class="ecra" id="ecraIntro">
   <div class="cartao">
-    <p class="selo">MISSÃO 1</p>
-    <h1>O computador do sótão</h1>
+    <p class="selo" id="introSelo">MISSÃO 1</p>
+    <h1 id="introTitulo">O computador do sótão</h1>
     <div id="introTexto"></div>
     <ul class="info">
-      <li>⏱ ~15 minutos</li><li>🐍 Python a sério, no navegador</li><li>💸 Grátis, sem instalar nada</li>
+      <li id="introDuracao">⏱ ~15 minutos</li><li>🐍 Python a sério, no navegador</li><li>💸 Grátis, sem instalar nada</li>
     </ul>
     <div class="botoes">
       <button class="btn" id="btnComecar">Ligar o computador</button>
       <button class="btn alt" id="btnDoZero" hidden>Começar do zero</button>
     </div>
+    <div class="missoes-lista" id="missoesLista"></div>
     <p class="mini">Tudo é simulado: ficheiros, rede e pessoas são inventados. Nada sai do teu navegador.</p>
   </div>
 </div>
@@ -184,23 +185,25 @@
 <!-- Ecrã final -->
 <div class="ecra" id="ecraFim" hidden>
   <div class="cartao">
-    <p class="selo ok">MISSÃO 1 CONCLUÍDA</p>
-    <h1>Entraste no FAROL.</h1>
+    <p class="selo ok" id="fimSelo">MISSÃO 1 CONCLUÍDA</p>
+    <h1 id="fimTitulo">Entraste no FAROL.</h1>
     <p id="fimTempo" class="dim"></p>
     <h3>O que aprendeste</h3>
     <div id="fimLista"></div>
     <div class="teaser" id="fimTeaser"></div>
-    <p>A missão 2 ainda está a ser escrita. Se gostaste, partilha com alguém que queira aprender — é isso que decide se o jogo continua.</p>
+    <p id="fimNota"></p>
     <div class="botoes">
-      <button class="btn" id="btnPartilhar">Partilhar o jogo</button>
+      <button class="btn" id="btnProxima" hidden>▶ Começar a missão 2</button>
+      <button class="btn alt" id="btnPartilhar">Partilhar o jogo</button>
       <button class="btn alt" id="btnFechar">Voltar ao computador</button>
     </div>
     <p class="mini">Feito por <a href="https://nicolaskcost.github.io" target="_blank" rel="noopener">Nicolas Kaiky Costa</a>.</p>
   </div>
 </div>
 
-<script src="missoes/missao1.js?v=17"></script>
-<script src="ambiente.js?v=17"></script>
-<script src="jogo.js?v=17"></script>
+<script src="missoes/missao1.js?v=18"></script>
+<script src="missoes/missao2.js?v=18"></script>
+<script src="ambiente.js?v=18"></script>
+<script src="jogo.js?v=18"></script>
 </body>
 </html>

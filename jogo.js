@@ -2,7 +2,14 @@
 (() => {
 'use strict';
 
-const M = window.MISSAO;
+const MISSOES = window.MISSOES.slice().sort((a, b) => a.numero - b.numero);
+const lsLer = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+const lsPor = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+const concluida = n => { try { return !!(JSON.parse(lsLer('farol_m' + n)) || {}).fim; } catch (e) { return false; } };
+const pedida = +new URLSearchParams(location.search).get('m') || +lsLer('farol_missao') || 1;
+const M = MISSOES.find(x => x.numero === pedida) || MISSOES[0];
+const SEGUINTE = MISSOES.find(x => x.numero === M.numero + 1);
+lsPor('farol_missao', M.numero);
 const CHAVE = 'farol_' + M.id;
 const PYODIDE_VER = '0.26.4';
 const PYODIDE_URL = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VER}/full/`;
@@ -10,7 +17,7 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 /* ---------- estado e gravação ---------- */
-const estadoNovo = () => ({ factos: {}, cwd: M.home, codigo: null, linhas: [], hist: [], lidos: {}, pendente: null, inicio: null, fim: null, comecou: false });
+const estadoNovo = () => ({ factos: {}, cwd: M.home, codigo: null, linhas: [], hist: [], lidos: {}, pendente: null, extra: {}, inicio: null, fim: null, comecou: false });
 let E = estadoNovo();
 function carregar() {
   try { const s = JSON.parse(localStorage.getItem(CHAVE)); if (s && typeof s === 'object') E = Object.assign(estadoNovo(), s); } catch (e) {}
@@ -78,6 +85,9 @@ const AJUDA = [
   ['ls', 'lista ficheiros e pastas (ls -a mostra os ocultos, ls -l mostra detalhes)'],
   ['cd <pasta>', 'entra numa pasta (cd .. sobe, cd sozinho volta a casa)'],
   ['cat <ficheiro>', 'mostra o conteúdo de um ficheiro'],
+  ['head <ficheiro>', 'mostra as primeiras 10 linhas (tail: as últimas)'],
+  ['wc -l <ficheiro>', 'conta as linhas de um ficheiro'],
+  ['grep <palavra> <f>', 'mostra só as linhas que têm a palavra'],
   ['pwd', 'mostra em que pasta estás'],
   ['whoami', 'mostra com que utilizador estás'],
   ['python', 'abre o editor de Python'],
@@ -142,16 +152,44 @@ const comandos = {
       }
       if (ehDir(n)) { linha(`cat: ${a}: É uma diretoria (usa cd ${a} para entrar)`, 'erro'); continue; }
       if (n === '\u0000BINARIO') { linha('ÿØÿà\u0000\u0010JFIF\u0000\u0001\u0001\u0000H\u0000H\u0000\u0000ÿÛ\u0000C\u0000\u0008\u0006\u0006\u0007\u0006\u0005\u0008…', 'dim'); linha('(isto é uma imagem, não texto — o cat só serve para texto)', 'warn'); continue; }
-      for (const l of n.replace(/\n$/, '').split('\n')) linha(l);
-      if (abs === M.home + '/LEIA-ME.txt') facto('leia');
-      if (abs === M.home + '/documentos/diario.txt') facto('diario');
-      if (abs === M.home + '/.segredo/mensagem.b64') facto('b64');
+      const ls = n.replace(/\n$/, '').split('\n');
+      if (ls.length > 250) linha(`(… ${ls.length - 200} linhas acima não mostradas. O ficheiro é grande: experimenta head, tail ou grep.)`, 'warn');
+      for (const l of ls.length > 250 ? ls.slice(-200) : ls) linha(l);
+      verCmd({ nome: 'cat', abs, linhas: ls });
     }
   },
   pwd() { linha(E.cwd); },
   whoami() { linha(M.user); },
   hostname() { linha(M.host); },
-  date() { linha('sex 20 mar 2009 23:58:12 WET'); linha('(o relógio deste computador parou)', 'dim'); },
+  date() { linha(M.dataTxt || 'sex 20 mar 2009 23:58:12 WET'); },
+  head(args) { mostrarParte(args, 'head'); },
+  tail(args) { mostrarParte(args, 'tail'); },
+  wc(args) {
+    const f = lerTexto(args.filter(a => !a.startsWith('-'))[0], 'wc'); if (!f) return;
+    const ls = f.txt.replace(/\n$/, '').split('\n');
+    if (args.includes('-l')) linha(`${ls.length} ${f.nome}`);
+    else linha(`${ls.length} ${f.txt.split(/\s+/).filter(Boolean).length} ${new Blob([f.txt]).size} ${f.nome}`);
+    verCmd({ nome: 'wc', abs: f.abs, n: ls.length });
+  },
+  grep(args) {
+    const flags = args.filter(a => /^-[a-z]+$/.test(a)).join('');
+    const resto = args.filter(a => !/^-[a-z]+$/.test(a));
+    const padrao = resto[0];
+    if (!padrao || !resto[1]) return linha('Uso: grep <palavra> <ficheiro>   (exemplo: grep Failed auth.log)', 'warn');
+    const f = lerTexto(resto[1], 'grep'); if (!f) return;
+    const i = flags.includes('i'), v = flags.includes('v');
+    const tem = l => (i ? l.toLowerCase().includes(padrao.toLowerCase()) : l.includes(padrao)) !== v;
+    const achadas = f.txt.replace(/\n$/, '').split('\n').filter(tem);
+    if (flags.includes('c')) linha(String(achadas.length));
+    else if (!achadas.length) linha(`(nenhuma linha com "${padrao}". Atenção: o grep distingue maiúsculas de minúsculas.)`, 'dim');
+    else {
+      const re = new RegExp('(' + padrao.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', i ? 'gi' : 'g');
+      const mostrar = achadas.length > 80 ? achadas.slice(0, 60) : achadas;
+      for (const l of mostrar) linha(v ? esc(l) : esc(l).replace(re, '<span class="grep-m">$1</span>'), '', true);
+      if (achadas.length > 80) linha(`(… e mais ${achadas.length - 60} linhas. Total: ${achadas.length}. Dica: grep -c ${padrao.includes(' ') ? '"' + padrao + '"' : padrao} ${resto[1]} só conta.)`, 'warn');
+    }
+    verCmd({ nome: 'grep', abs: f.abs, padrao, flags, linhas: achadas });
+  },
   uname(args) { linha(args.includes('-a') ? 'Linux sotao 2.6.28-11-generic #42 i686 GNU/Linux' : 'Linux'); },
   echo(args) { linha(args.join(' ')); },
   clear() { saida.innerHTML = ''; E.linhas = []; gravar(); },
@@ -166,13 +204,14 @@ const comandos = {
   ssh(args, ehPing) {
     if (ehPing) {
       const ip = args[0];
-      if (ip === M.servidor.ip) { linha(`64 bytes de ${ip}: icmp_seq=1 ttl=64 tempo=0.42 ms`); linha('O servidor está vivo.', 'dim'); }
+      if (M.servidor && ip === M.servidor.ip) { linha(`64 bytes de ${ip}: icmp_seq=1 ttl=64 tempo=0.42 ms`); linha('O servidor está vivo.', 'dim'); }
       else linha(`ping: ${ip || '?'}: sem resposta`, 'erro');
       return;
     }
     const alvo = args.find(a => !a.startsWith('-'));
     if (!alvo) return linha('Uso: ssh utilizador@endereço   (exemplo: ssh marta@10.0.0.7)', 'warn');
     const [u, ip] = alvo.includes('@') ? alvo.split('@') : [M.user, alvo];
+    if (!M.servidor) return linha(`ssh: ligar a ${ip} porta 22: ligação recusada`, 'erro');
     if (ip !== M.servidor.ip && ip !== 'farol') return linha(`ssh: ligar ao servidor ${ip} porta 22: tempo esgotado`, 'erro');
     if (u !== M.servidor.user) return linha(`${u}@${ip}: Permission denied (publickey,password).`, 'erro');
     linha(`A ligar a ${M.servidor.ip}...`, 'dim');
@@ -180,6 +219,32 @@ const comandos = {
   }
 };
 comandos.python3 = comandos.python;
+
+// lê um ficheiro de texto para head/tail/wc/grep (mostra o erro se não der)
+function lerTexto(a, nomeCmd) {
+  if (!a) { linha(`${nomeCmd}: falta o nome do ficheiro`, 'erro'); return null; }
+  const abs = normalizar(a, E.cwd), n = obter(abs);
+  if (n === undefined) { linha(`${nomeCmd}: ${a}: Ficheiro ou diretoria inexistente`, 'erro'); return null; }
+  if (ehDir(n)) { linha(`${nomeCmd}: ${a}: É uma diretoria`, 'erro'); return null; }
+  if (n === '\u0000BINARIO') { linha(`${nomeCmd}: ${a}: ficheiro binário (não é texto)`, 'erro'); return null; }
+  return { abs, txt: n, nome: a };
+}
+function mostrarParte(args, qual) {
+  let n = 10;
+  const iN = args.indexOf('-n');
+  if (iN >= 0) n = +args[iN + 1] || 10;
+  const curto = args.find(a => /^-\d+$/.test(a)); if (curto) n = +curto.slice(1);
+  const nome = args.filter((a, k) => !a.startsWith('-') && !(iN >= 0 && k === iN + 1))[0];
+  const f = lerTexto(nome, qual); if (!f) return;
+  const ls = f.txt.replace(/\n$/, '').split('\n');
+  for (const l of qual === 'head' ? ls.slice(0, n) : ls.slice(-n)) linha(l);
+  verCmd({ nome: qual, abs: f.abs, linhas: ls });
+}
+// a missão decide que comandos contam como passos
+function verCmd(info) { for (const f of (M.verificarCmd ? M.verificarCmd(info) : [])) facto(f); }
+// comandos que só existem numa missão (ex.: firewall)
+const API = { linha, facto: n => facto(n), espera, esc, avisar: (...a) => avisar(...a), estado: () => E, gravar: () => gravar(), marcarNovo: id => WM.marcarNovo(id) };
+if (M.comandos) Object.assign(comandos, M.comandos(API));
 comandos.vi = comandos.vim = comandos.nano;
 
 function sugerir(nome) {
@@ -210,7 +275,7 @@ async function entrarFarol() {
     ['  ██      ██   ██ ██   ██  ██████  ███████ ', 'ok'],
     ['', ''],
     ['Bem-vinda de volta, marta.', ''],
-    ['Último login: sáb 21 mar 2009 03:14 a partir de 10.0.0.66', 'dim'],
+    ['Último login: sex 20 mar 2009 03:14 a partir de 10.0.0.66', 'dim'],
     ['marta@farol:~$ ls', 'eco'],
     ['clientes.db   registos/   NAO_ABRIR.txt', ''],
     ['', ''],
@@ -349,12 +414,14 @@ function pyEscrever(t, cls) {
 }
 
 const DICAS = [
-  [/SyntaxError.*\?\?\?|invalid syntax/i, 'Erro de sintaxe: o Python não percebeu uma linha. Se ainda tens <code>???</code> no código, troca-o pelo nome da função.'],
+  [/SyntaxError.*\?\?\?|invalid syntax/i, 'Erro de sintaxe: o Python não percebeu uma linha. Se ainda tens <code>???</code> no código, troca-o pelo que falta (lê as notas).'],
   [/SyntaxError/, 'Erro de sintaxe: falta ou sobra algum símbolo (aspas, parênteses, dois pontos). Vê a linha indicada.'],
   [/IndentationError/, 'Erro de indentação: no Python os espaços no início da linha contam. Linhas dentro de um <code>with</code> levam 4 espaços.'],
   [/NameError: name '(\w+)'/, m => `O Python não conhece <code>${esc(m[1])}</code>. Escreveste bem o nome? Se for texto, põe-no entre aspas.`],
   [/AttributeError: module 'base64' has no attribute '(\w+)'/, m => `Escreveste <code>base64.${esc(m[1])}</code>, mas a caixa de ferramentas <code>base64</code> não tem nenhuma ferramenta com esse nome.<br>O nome certo é <code>b64decode</code> — começa por <b>b64</b>, sem a palavra “base”. O <code>base64.</code> antes já lá estava, não se repete.<br>A linha tem de ficar assim:<br><code>texto = base64.b64decode(codificado).decode("utf-8")</code>`],
-  [/FileNotFoundError/, 'Ficheiro não encontrado. Confirma o caminho: <code>/home/marta/.segredo/mensagem.b64</code>'],
+  [/FileNotFoundError/, 'Ficheiro não encontrado. Confirma o caminho entre aspas, letra a letra (maiúsculas contam).'],
+  [/IndexError/, 'Essa posição não existe na lista. Lembra-te: as posições contam-se a partir do <b>0</b>, e a última é o tamanho menos 1.'],
+  [/TypeError: list indices must be integers/, 'Dentro dos parênteses retos tem de estar um <b>número</b> (a posição), sem aspas.'],
   [/binascii\.Error|Incorrect padding|Invalid base64/, 'Isso não é base64 válido. Estás a descodificar o conteúdo do ficheiro mensagem.b64?'],
   [/UnicodeDecodeError/, 'Esses bytes não são texto. Estás a ler o ficheiro certo?']
 ];
@@ -419,7 +486,7 @@ function mostrarCaixas(p, ns) {
     else if (/IOWrapper/.test(tipo)) itens.push(`<span class="cm-cx">📄 <b>${esc(k)}</b> <i>ficheiro (já fechado)</i></span>`);
     else {
       const v = rep.length > 46 ? rep.slice(0, 44) + '…' + rep.slice(-1) : rep;
-      const t = { str: 'texto', int: 'número', float: 'número', bytes: 'bytes', bool: 'sim/não', list: 'lista' }[tipo] || tipo;
+      const t = { str: 'texto', int: 'número', float: 'número', bytes: 'bytes', bool: 'sim/não', list: 'lista', dict: 'dicionário', Counter: 'contagem' }[tipo] || tipo;
       itens.push(`<span class="cm-cx">📦 <b>${esc(k)}</b> = <code>${esc(v)}</code> <i>${t}</i></span>`);
     }
   }
@@ -430,13 +497,7 @@ function mostrarCaixas(p, ns) {
 }
 
 function verificarPython(out, src = '') {
-  const nm = src.match(/^\s*nome\s*=\s*["']([^"'\n]+)["']/m);
-  if (nm && nm[1].trim() && nm[1].trim() !== 'Marta' && out.includes(nm[1].trim())) facto('variavel');
-  const dado = src.match(/random\.randint\(\s*1\s*,\s*(\d+)\s*\)/);
-  if (dado && dado[1] !== '6' && /import\s+random/.test(src) && /\d/.test(out)) facto('importou');
-  if (/U2UgZXN0w6Fz/.test(out)) facto('pyCorreu');
-  if (/10\.0\.0\.7/.test(out) && /orucsbo_loraf/.test(out)) { facto('pyCorreu'); facto('decoded'); }
-  if (/farol_obscuro/.test(out)) facto('senha');
+  for (const f of (M.verificarPy ? M.verificarPy(out, src) : [])) facto(f);
 }
 
 /* cores do código: comentário, texto, variável, função, palavra do Python, módulo */
@@ -444,7 +505,7 @@ const realce = $('#realce');
 const PALAVRAS = new Set(['import', 'from', 'as', 'with', 'def', 'return', 'for', 'in', 'if', 'elif', 'else', 'while', 'and', 'or', 'not', 'True', 'False', 'None', 'try', 'except', 'class', 'is', 'break', 'continue', 'pass', 'lambda']);
 const RE_PY = /(#[^\n]*)|("(?:[^"\\\n]|\\.)*"?|'(?:[^'\\\n]|\\.)*'?)|(\?\?\?)|\b(\d+(?:\.\d+)?)\b|\b([A-Za-z_]\w*)\b(?=(\s*\()?)/g;
 function colorir(src) {
-  const modulos = new Set(['base64', 'os', ...[...src.matchAll(/^\s*import\s+(\w+)/gm)].map(m => m[1])]);
+  const modulos = new Set(['base64', 'os', 'random', 'collections', ...[...src.matchAll(/^\s*import\s+(\w+)/gm)].map(m => m[1])]);
   let out = '', i = 0, m;
   RE_PY.lastIndex = 0;
   while ((m = RE_PY.exec(src))) {
@@ -459,7 +520,7 @@ function colorir(src) {
     else if (m[6] !== undefined) cls = 'c-fn';
     else if (modulos.has(m[5])) cls = 'c-mod';
     else cls = 'c-var';
-    out += `<span class="${cls}">${esc(m[0])}</span>`;
+    out += `<span class="${cls}">${cls === 'c-txt' ? esc(m[0]).replace(/\?\?\?/g, '<span class="c-falta">???</span>') : esc(m[0])}</span>`;
     i = m.index + m[0].length;
   }
   return out + esc(src.slice(i)) + '\n';
@@ -521,9 +582,11 @@ function facto(nome) {
     if (feito && feito.feito && !saltando && depois < M.passos.length) {
       E.pendente = antes; gravar();
       desenharPassos();
-      const d = document.createElement('div'); d.className = 'py-ok';
-      d.innerHTML = '<b>✓ Conseguiste!</b> Vê o resultado aqui em cima e lê nas <b>Notas</b> o que aconteceu. <button data-acao="continuar">Continuar →</button>';
-      pySaida.appendChild(d);
+      if (feito.codigo) {
+        const d = document.createElement('div'); d.className = 'py-ok';
+        d.innerHTML = '<b>✓ Conseguiste!</b> Vê o resultado aqui em cima e lê nas <b>Notas</b> o que aconteceu. <button data-acao="continuar">Continuar →</button>';
+        pySaida.appendChild(d);
+      }
       avisar('✓ Conseguiste! Lê nas notas <b>o que aconteceu</b>.', WM.ativa() === 'notas' ? null : 'Ver notas');
       marcarNovo('missao');
       return;
@@ -548,8 +611,9 @@ function entrarPasso(i) {
     porCodigo(p.codigo);
     pySaida.innerHTML = '<span class="dim">O editor tem um programa novo. Lê as notas e carrega em ▶ Executar.</span>';
     prepararPython();
-    if (!WM.aberta('python')) WM.marcarNovo('python');
-  } else if (i >= 5) WM.marcarNovo('terminal');   // depois do Python, de volta ao terminal
+  }
+  if (p.abre && WM.ativa() !== p.abre) WM.marcarNovo(p.abre);
+  if (M.aoEntrarPasso) M.aoEntrarPasso(p, API);
   avisar(`➜ Próximo passo: <b>${esc(p.titulo)}</b>`, WM.ativa() === 'notas' ? null : 'Ver notas');
   marcarNovo('missao');
 }
@@ -583,7 +647,7 @@ function desenharPassos() {
   });
   if (atual >= M.passos.length) {
     const li = document.createElement('li');
-    li.innerHTML = '<div class="passo-final"><b>Missão 1 concluída.</b><br>A missão 2 está a caminho.<br><button class="btn" data-acao="fim">Ver resumo</button></div>';
+    li.innerHTML = `<div class="passo-final"><b>Missão ${M.numero} concluída.</b><br>${SEGUINTE ? `A missão ${SEGUINTE.numero} já te espera.` : 'A próxima missão está a caminho.'}<br><button class="btn" data-acao="fim">Ver resumo</button></div>`;
     olPassos.appendChild(li);
   }
   const n = Math.min(atual, M.passos.length);
@@ -722,26 +786,26 @@ let mailSel = null;
 function desenharCorreio() {
   const lidos = E.lidos || (E.lidos = {});
   const lista = mailsVisiveis().slice().reverse();
-  $('#mailLista').innerHTML = lista.map(m => `<li data-id="${m.id}" class="${lidos[m.id] ? '' : 'nao-lido'}${m.id === mailSel ? ' sel' : ''}">
+  $('#mailLista').innerHTML = lista.map(m => `<li data-id="${m.id}" class="${lidos[m.id] || m.lido ? '' : 'nao-lido'}${m.id === mailSel ? ' sel' : ''}">
     <span class="dt">${esc(m.data)}</span><span class="de">${esc(m.de.split(' <')[0])}</span><span class="ass">${esc(m.assunto)}</span></li>`).join('');
   const m = M.correio.find(x => x.id === mailSel);
   $('#win-correio .correio').classList.toggle('lendo', !!m);
   $('#mailLer').innerHTML = m
     ? `<button class="mail-voltar">← Caixa de entrada</button><h3>${esc(m.assunto)}</h3><div class="meta">De: ${esc(m.de)}<br>Para: marta.reis@vigia.pt · ${esc(m.data)}</div><div class="corpo-mail">${esc(m.corpo)}</div>`
     : '<p class="dim">Escolhe uma mensagem.</p>';
-  const porLer = mailsVisiveis().filter(x => !lidos[x.id]).length;
+  const porLer = mailsVisiveis().filter(x => !lidos[x.id] && !x.lido).length;
   if (porLer) WM.marcarNovo('correio');
 }
 $('#mailLista').addEventListener('click', e => {
   const li = e.target.closest('li'); if (!li) return;
-  mailSel = li.dataset.id; (E.lidos || (E.lidos = {}))[mailSel] = true; gravar(); desenharCorreio();
+  mailSel = li.dataset.id; (E.lidos || (E.lidos = {}))[mailSel] = true; gravar(); desenharCorreio(); facto('mail:' + mailSel);
 });
 $('#mailLer').addEventListener('click', e => { if (e.target.closest('.mail-voltar')) { mailSel = null; desenharCorreio(); } });
 function chegouMail(nomeFacto) {
   for (const m of M.correio) if (m.quando === nomeFacto) {
     setTimeout(() => {
       desenharCorreio(); WM.marcarNovo('correio');
-      avisar(`✉ <b>Novo e-mail</b> de ${esc(m.de.split(' <')[0])}: “${esc(m.assunto)}”`, 'Abrir', () => { mailSel = m.id; (E.lidos || (E.lidos = {}))[m.id] = true; gravar(); abrirApp('correio'); desenharCorreio(); }, 'mail');
+      avisar(`✉ <b>Novo e-mail</b> de ${esc(m.de.split(' <')[0])}: “${esc(m.assunto)}”`, 'Abrir', () => { mailSel = m.id; (E.lidos || (E.lidos = {}))[m.id] = true; gravar(); abrirApp('correio'); desenharCorreio(); facto('mail:' + m.id); }, 'mail');
     }, 4000);
   }
 }
@@ -753,9 +817,17 @@ function mostrarFim() {
   $('#fimTempo').textContent = `Tempo: ${min} minuto${min > 1 ? 's' : ''}.`;
   $('#fimLista').innerHTML = '<ul class="lista">' + M.fim.aprendeste.map(x => `<li>${x}</li>`).join('') + '</ul>' + (M.fim.proximo ? `<p class="proximo">${M.fim.proximo}</p>` : '');
   $('#fimTeaser').innerHTML = M.fim.teaser;
+  $('#fimSelo').textContent = `MISSÃO ${M.numero} CONCLUÍDA`;
+  $('#fimTitulo').textContent = M.fim.titulo || 'Missão concluída.';
+  $('#btnProxima').hidden = !SEGUINTE;
+  if (SEGUINTE) $('#btnProxima').textContent = `▶ Começar a missão ${SEGUINTE.numero}`;
+  $('#fimNota').textContent = SEGUINTE
+    ? 'Se estás a gostar, partilha com alguém que queira aprender — é isso que decide se o jogo continua.'
+    : `A missão ${M.numero + 1} ainda está a ser escrita. Se gostaste, partilha com alguém que queira aprender — é isso que decide se o jogo continua.`;
   $('#ecraFim').hidden = false;
 }
 $('#btnFechar').onclick = () => { $('#ecraFim').hidden = true; };
+$('#btnProxima').onclick = () => { location.href = location.pathname + '?m=' + SEGUINTE.numero; };
 $('#btnPartilhar').onclick = async () => {
   const dados = { title: 'FAROL · jogo de hacker em português', text: 'Aprende terminal e Python a investigar um computador velho. Grátis, no navegador:', url: location.href.split(/[?#]/)[0] };
   try {
@@ -767,11 +839,13 @@ $('#btnPartilhar').onclick = async () => {
 function abrirJanelasIniciais() {
   // começa só com as notas: o jogador abre o Terminal e o Python pelos ícones, quando as notas mandarem
   const i = indiceAtual();
-  if (i >= 6) WM.abrir('python', { semFoco: true });
-  if (i >= 1) WM.abrir('terminal', { semFoco: true });
+  const jaAbertas = new Set(M.passos.slice(0, i).map(p => p.abre).filter(Boolean));
+  if (jaAbertas.has('python')) WM.abrir('python', { semFoco: true });
+  if (jaAbertas.has('terminal')) WM.abrir('terminal', { semFoco: true });
   WM.abrir('notas');
-  if (i === 0) WM.marcarNovo('terminal');
-  if (i === 5) WM.marcarNovo('python');
+  const p = M.passos[i];
+  if (p && p.abre && !jaAbertas.has(p.abre)) WM.marcarNovo(p.abre);
+  if (p && M.aoEntrarPasso && E.pendente == null) M.aoEntrarPasso(p, API);
 }
 
 async function arrancar(novo) {
@@ -786,14 +860,14 @@ async function arrancar(novo) {
     $('#splash').hidden = false;
     await espera(1400);
     $('#splash').hidden = true;
-    WM.relogio(E.inicio);
+    WM.relogio(E.inicio, M.relogio);
     abrirJanelasIniciais();
     if (!mobil()) cmd.focus({ preventScroll: true });
     for (const [t, c] of M.boot) { linha(t, c); await espera(220); }
     ocupado = false;
     gravar();
   } else {
-    WM.relogio(E.inicio);
+    WM.relogio(E.inicio, M.relogio);
     abrirJanelasIniciais();
   }
   if (!mobil()) cmd.focus({ preventScroll: true });
@@ -811,13 +885,33 @@ $('#btnRecomecar').onclick = () => {
 carregar();
 $('#introTexto').innerHTML = M.intro.map(p => `<p>${p}</p>`).join('');
 $('#tituloMissao').textContent = M.titulo; $('#numMissao').textContent = M.numero;
+document.title = `FAROL · Missão ${M.numero}`;
+$('#introSelo').textContent = `MISSÃO ${M.numero}`;
+$('#introTitulo').textContent = M.titulo;
+$('#introDuracao').textContent = '⏱ ' + (M.duracao || '~15 minutos');
+document.querySelector('.tm-txt').textContent = `Missão ${M.numero}`;
+// lista de missões no ecrã inicial
+const BREVE = window.MISSOES_BREVE || [];
+$('#missoesLista').innerHTML = [...MISSOES, ...BREVE.filter(b => !MISSOES.some(x => x.numero === b.numero))].map(x => {
+  const aberta = x.numero === 1 || concluida(x.numero - 1) || x.numero === M.numero;
+  const estado = x.breve ? 'breve' : x.numero === M.numero ? 'atual' : concluida(x.numero) ? 'feita' : aberta ? '' : 'fechada';
+  const icone = x.breve ? '⏳' : concluida(x.numero) ? '✓' : aberta ? '▶' : '🔒';
+  return `<button class="mi ${estado}" data-m="${x.numero}" ${x.breve ? 'disabled' : ''}>${icone} <b>Missão ${x.numero}</b> · ${esc(x.titulo)}${x.breve ? ' <i>(em breve)</i>' : ''}</button>`;
+}).join('');
+$('#missoesLista').addEventListener('click', e => {
+  const b = e.target.closest('.mi'); if (!b || b.disabled) return;
+  const n = +b.dataset.m;
+  if (n === M.numero) return;
+  if (b.classList.contains('fechada')) { avisar(`🔒 Termina primeiro a missão ${n - 1}.`); return; }
+  location.href = location.pathname + '?m=' + n;
+});
 for (const [t, c] of E.linhas) linha(t, c, true, false);
 porCodigo(E.codigo || (M.passos[indiceAtual()] || {}).codigo || CODIGO_INICIAL);
 desenharPassos(); atualizarPrompt(); desenharFM(); desenharCorreio(); WM.render();
 if (E.comecou) {
   $('#btnComecar').textContent = 'Continuar';
   $('#btnDoZero').hidden = false;
-  if (indiceAtual() >= M.passos.length || M.passos[indiceAtual()].codigo || E.factos.b64) prepararPython();
+  if (M.passos.slice(0, indiceAtual() + 1).some(p => p.codigo)) prepararPython();
 }
 $('#btnComecar').onclick = () => arrancar(false);
 $('#btnDoZero').onclick = () => arrancar(true);

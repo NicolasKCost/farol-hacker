@@ -347,3 +347,22 @@ code.cmd:hover{background:#1f5233!important}
   .tb-app,.menu-btn,.tarefas-missao{height:28px}
 }
 @media (min-width:821px){ .avisos{top:12px;bottom:auto} }
+
+/* destaque do grep */
+.grep-m{color:#ff6b6b;font-weight:700}
+/* escolha de missões no ecrã inicial */
+.missoes-lista{display:grid;gap:6px;margin-top:18px}
+.mi{text-align:left;background:var(--bg3);border:1px solid var(--linha);color:var(--txt);border-radius:8px;padding:8px 12px;font-size:14px}
+.mi:hover:not(:disabled){border-color:var(--verde2)}
+.mi.atual{border-color:var(--verde);background:#123321}
+.mi.feita{color:var(--verde)}
+.mi.fechada,.mi.breve{opacity:.55}
+.mi.breve{cursor:default}
+/* pedaços de uma lista com a posição por cima */
+.pecas{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0}
+.pecas span{display:flex;flex-direction:column;align-items:center;background:#fff;border:1px solid #c9b98f;border-radius:4px;padding:2px 6px;font:12px var(--mono)}
+.pecas span i{font-style:normal;font:700 10px var(--mono);color:#fff;background:#2e7d4f;border-radius:3px;padding:0 4px;margin-bottom:2px}
+.pecas span.mais{border-style:dashed;justify-content:center}
+/* anatomia de uma linha do registo */
+.anat{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;background:#0d130f;color:#d6e7da;border-radius:8px;padding:8px 10px;margin:8px 0;font-size:12.5px}
+.anat code{background:none!important;color:#ffe46b;white-space:nowrap}

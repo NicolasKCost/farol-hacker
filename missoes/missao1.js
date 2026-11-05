@@ -1,9 +1,12 @@
 /* Missão 1 — O computador do sótão
    Tudo aqui é ficção: ficheiros, rede e pessoas não existem. */
-window.MISSAO = {
+(window.MISSOES = window.MISSOES || []).push({
   id: 'm1',
   numero: 1,
   titulo: 'O computador do sótão',
+  duracao: '~15 minutos',
+  relogio: [2009, 2, 20, 23, 58],
+  dataTxt: 'sex 20 mar 2009 23:58:12 WET',
   user: 'marta',
   host: 'sotao',
   home: '/home/marta',
@@ -102,6 +105,7 @@ window.MISSAO = {
   passos: [
     {
       facto: 'help',
+      abre: 'terminal',
       titulo: 'Liga-te ao terminal',
       historia: 'O ecrã é preto, só com texto. Isto é um <b>terminal</b>: em vez de clicar em ícones, escreves comandos.',
       aprende: 'Num terminal escreves um comando e carregas em <kbd>Enter</kbd>. O comando <code>help</code> mostra o que este computador sabe fazer.',
@@ -142,6 +146,7 @@ window.MISSAO = {
     },
     {
       facto: 'variavel',
+      abre: 'python',
       feito: 'Criaste duas caixas: <b>nome</b>, com o teu nome, e <b>ano</b>, com 2009. O <code>print</code> foi buscar o que estava dentro de cada caixa e mostrou-o no ecrã. Vê na janela Python, em <b>📦 Caixas na memória</b>, as duas caixas e o que têm dentro.<br>Quando mudaste o nome, o programa mostrou o nome novo: <b>a caixa guarda o que lá puseres</b>.',
       licao: true,
       titulo: 'Lição: caixas com nome (variáveis)',
@@ -292,6 +297,7 @@ window.MISSAO = {
     },
     {
       facto: 'ssh',
+      abre: 'terminal',
       titulo: 'Entra no FAROL',
       historia: 'Tens o endereço, o utilizador e a palavra-passe. Hora de ver o que a Vigia anda a esconder.',
       aprende: '<code>ssh</code> (de <i>secure shell</i>) liga-te a outro computador pela rede, para lhe dares comandos à distância. O formato é <code>ssh utilizador@endereço</code>.',
@@ -301,6 +307,7 @@ window.MISSAO = {
   ],
 
   fim: {
+    titulo: 'Entraste no FAROL.',
     aprendeste: [
       'No terminal: <code>ls</code> lista o que há numa pasta, <code>ls -a</code> mostra também os ocultos, <code>cd</code> entra numa pasta e <code>cat</code> lê um ficheiro.',
       'Um ficheiro oculto (com ponto no início do nome) não está protegido: só não aparece à primeira.',
@@ -314,4 +321,27 @@ window.MISSAO = {
     proximo: 'Até agora usaste e mudaste programas que já estavam escritos. Na missão 2 vais escrever um tu, do zero.',
     teaser: '<b>Missão 2 · O Vigia</b><br>O Rui sabe que entraste. Tens um registo com milhares de ligações ao FAROL e alguém está a apagar provas. Vais escrever um script Python que encontra, no meio do ruído, o IP do invasor — antes que ele te encontre a ti.'
   }
-};
+
+  ,
+  // que comandos do terminal contam como passos
+  verificarCmd(i) {
+    if (i.nome !== 'cat') return [];
+    return ({
+      '/home/marta/LEIA-ME.txt': ['leia'],
+      '/home/marta/documentos/diario.txt': ['diario'],
+      '/home/marta/.segredo/mensagem.b64': ['b64']
+    })[i.abs] || [];
+  },
+  // que resultados do Python contam como passos
+  verificarPy(out, src) {
+    const f = [];
+    const nm = src.match(/^\s*nome\s*=\s*["']([^"'\n]+)["']/m);
+    if (nm && nm[1].trim() && nm[1].trim() !== 'Marta' && out.includes(nm[1].trim())) f.push('variavel');
+    const dado = src.match(/random\.randint\(\s*1\s*,\s*(\d+)\s*\)/);
+    if (dado && dado[1] !== '6' && /import\s+random/.test(src) && /\d/.test(out)) f.push('importou');
+    if (/U2UgZXN0w6Fz/.test(out)) f.push('pyCorreu');
+    if (/10\.0\.0\.7/.test(out) && /orucsbo_loraf/.test(out)) f.push('pyCorreu', 'decoded');
+    if (/farol_obscuro/.test(out)) f.push('senha');
+    return f;
+  }
+});

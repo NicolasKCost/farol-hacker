@@ -170,9 +170,10 @@ window.addEventListener('resize', () => {
 /* relógio da barra de tarefas (o tempo do jogo começa a 20/03/2009 23:58) */
 const DIAS = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
 let base = null;
-function relogio(inicio) { base = inicio; tique(); }
+let arranque = [2009, 2, 20, 23, 58];
+function relogio(inicio, quando) { base = inicio; if (quando) arranque = quando; tique(); }
 function tique() {
-  const t0 = new Date(2009, 2, 20, 23, 58, 0).getTime();
+  const t0 = new Date(...arranque, 0).getTime();
   const d = new Date(t0 + (base ? Date.now() - base : 0));
   document.getElementById('relogio').textContent = `${DIAS[d.getDay()]} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 }
