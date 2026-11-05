@@ -10,7 +10,7 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 /* ---------- estado e gravação ---------- */
-const estadoNovo = () => ({ factos: {}, cwd: M.home, codigo: null, linhas: [], hist: [], lidos: {}, inicio: null, fim: null, comecou: false });
+const estadoNovo = () => ({ factos: {}, cwd: M.home, codigo: null, linhas: [], hist: [], lidos: {}, pendente: null, inicio: null, fim: null, comecou: false });
 let E = estadoNovo();
 function carregar() {
   try { const s = JSON.parse(localStorage.getItem(CHAVE)); if (s && typeof s === 'object') E = Object.assign(estadoNovo(), s); } catch (e) {}
@@ -515,26 +515,52 @@ function facto(nome) {
   gravar();
   chegouMail(nome);
   if (depois !== antes) {
-    desenharPassos();
-    const p = M.passos[depois];
-    if (depois >= M.passos.length) { E.fim = E.fim || Date.now(); gravar(); setTimeout(mostrarFim, 900); }
-    else {
-      if (p.codigo) {
-        porCodigo(p.codigo);
-        pySaida.innerHTML = '<span class="dim">O editor tem um programa novo. Lê as notas e carrega em ▶ Executar.</span>'; prepararPython(); if (!WM.aberta('python')) WM.marcarNovo('python'); }
-      avisar(`✓ Passo concluído! Próximo: <b>${esc(p.titulo)}</b>`, WM.ativa() === 'notas' ? null : 'Ver notas');
+    const feito = M.passos[antes];
+    // passos de Python: parar para a pessoa ver o resultado e ler o que aconteceu
+    if (feito && feito.feito && !saltando && depois < M.passos.length) {
+      E.pendente = antes; gravar();
+      desenharPassos();
+      const d = document.createElement('div'); d.className = 'py-ok';
+      d.innerHTML = '<b>✓ Conseguiste!</b> Vê o resultado aqui em cima e lê nas <b>Notas</b> o que aconteceu. <button data-acao="continuar">Continuar →</button>';
+      pySaida.appendChild(d); pySaida.scrollTop = pySaida.scrollHeight;
+      avisar('✓ Conseguiste! Lê nas notas <b>o que aconteceu</b>.', WM.ativa() === 'notas' ? null : 'Ver notas');
       marcarNovo('missao');
+      return;
     }
+    entrarPasso(depois);
   }
 }
 
+let saltando = false;
+function continuar() {
+  E.pendente = null; gravar();
+  entrarPasso(indiceAtual());
+  mostrarAba('missao');
+}
+function entrarPasso(i) {
+  desenharPassos();
+  const p = M.passos[i];
+  if (i >= M.passos.length) { E.fim = E.fim || Date.now(); gravar(); setTimeout(mostrarFim, 900); return; }
+  if (p.codigo) {
+    porCodigo(p.codigo);
+    pySaida.innerHTML = '<span class="dim">O editor tem um programa novo. Lê as notas e carrega em ▶ Executar.</span>';
+    prepararPython();
+    if (!WM.aberta('python')) WM.marcarNovo('python');
+  }
+  avisar(`➜ Próximo passo: <b>${esc(p.titulo)}</b>`, WM.ativa() === 'notas' ? null : 'Ver notas');
+  marcarNovo('missao');
+}
+pySaida.addEventListener('click', e => { if (e.target.closest('[data-acao="continuar"]')) continuar(); });
+
 function desenharPassos() {
-  const atual = indiceAtual();
+  const pend = E.pendente != null && E.pendente < indiceAtual() ? E.pendente : null;
+  const atual = pend != null ? pend + 1 : indiceAtual();
   olPassos.innerHTML = '';
   M.passos.forEach((p, i) => {
     const li = document.createElement('li');
-    li.className = 'passo ' + (i < atual ? 'feito' : i === atual ? 'atual' : 'futuro');
-    li.innerHTML = `<h2>${esc(p.titulo)}</h2>` + (i > atual ? '' : `
+    const futuro = i > atual || (pend != null && i === atual);
+    li.className = 'passo ' + (i < atual ? 'feito' : futuro ? 'futuro' : 'atual') + (i === pend ? ' pendente' : '');
+    li.innerHTML = `<h2>${esc(p.titulo)}</h2>` + (i === pend ? `<div class="resultado"><div class="res-tit">✓ Conseguiste! O que aconteceu:</div>${p.feito}<button class="btn" data-acao="continuar">Continuar →</button></div>` : '') + (futuro ? '' : `
       <div class="corpo">
         <p>${p.historia}</p>
         <div class="aprende">${p.aprende}</div>
@@ -576,7 +602,8 @@ olPassos.addEventListener('click', e => {
     const a = b.dataset.acao;
     if (a === 'pista') li.querySelector('.pista').classList.toggle('ver');
     else if (a === 'codigo') { porCodigo(M.passos[li.dataset.i].codigo); mostrarAba('python'); }
-    else if (a === 'saltar') { facto(M.passos[li.dataset.i].facto); }
+    else if (a === 'saltar') { saltando = true; facto(M.passos[li.dataset.i].facto); saltando = false; }
+    else if (a === 'continuar') continuar();
     else if (a === 'solucao') { porCodigo(M.passos[li.dataset.i].solucao); mostrarAba('python'); avisar('Pronto, o código está escrito. Agora carrega em <b>▶ Executar</b>.'); }
     else if (a === 'ir-python') { mostrarAba('python'); prepararPython(); }
     else if (a === 'ir-terminal') { mostrarAba('terminal'); cmd.focus({ preventScroll: true }); }

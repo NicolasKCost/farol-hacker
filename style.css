@@ -312,3 +312,12 @@ code.cmd:hover{background:#1f5233!important}
 .cm-ferr b{color:#4ee0b5}
 .cm-cx i,.cm-ferr i{color:#7d8b80;font-size:11px}
 .passo .acoes button[data-acao="saltar"]{border-style:dashed;color:#6b5f45}
+
+/* resultado de um passo de Python: fica à espera de "Continuar" */
+.passo.pendente{opacity:1}
+.resultado{background:#e5f6ea;border:1px solid #8cc9a0;border-radius:8px;padding:10px 12px;margin:6px 0 4px;font-size:14px;line-height:1.55;color:#173a24}
+.res-tit{font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:#2e7d4f;margin-bottom:4px}
+.resultado code{background:#cdeed7!important}
+.resultado .btn{display:block;margin-top:10px;font-size:14px;padding:8px 14px}
+.py-ok{margin-top:10px;padding:8px 10px;border-radius:6px;background:#163b25;color:#d9ffe6;font-family:var(--sans);white-space:normal;font-size:13px}
+.py-ok button{margin-left:6px;background:var(--verde);color:#04140a;border:0;border-radius:6px;padding:4px 10px;font-weight:700}

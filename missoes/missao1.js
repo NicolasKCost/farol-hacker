@@ -142,6 +142,7 @@ window.MISSAO = {
     },
     {
       facto: 'variavel',
+      feito: 'Criaste duas caixas: <b>nome</b>, com o teu nome, e <b>ano</b>, com 2009. O <code>print</code> foi buscar o que estava dentro de cada caixa e mostrou-o no ecrã. Vê na janela Python, em <b>📦 Caixas na memória</b>, as duas caixas e o que têm dentro.<br>Quando mudaste o nome, o programa mostrou o nome novo: <b>a caixa guarda o que lá puseres</b>.',
       licao: true,
       titulo: 'Lição: caixas com nome (variáveis)',
       historia: 'A mensagem está disfarçada com <b>base64</b>, e a Marta apagou o comando que a lia. Vais ter de usar <b>Python</b>, uma linguagem para dar ordens ao computador. Primeiro, a ideia mais importante da programação: as <b>variáveis</b>.',
@@ -174,6 +175,7 @@ window.MISSAO = {
     },
     {
       facto: 'pyCorreu',
+      feito: 'O programa abriu o ficheiro <b>mensagem.b64</b>, leu-o todo e guardou-o na caixa <b>codificado</b> (está nas 📦 Caixas na memória). Depois o <code>print</code> mostrou-o no ecrã: é a mesma sopa de letras que viste com o <code>cat</code> no terminal.<br>Agora o Python já tem a mensagem numa caixa. Falta tirar-lhe o disfarce.',
       titulo: 'Guarda a mensagem numa caixa',
       historia: 'Agora que sabes o que é uma caixa, vais guardar numa delas a mensagem disfarçada da Marta.',
       aprende: 'Este programa usa a função <b>open</b> para abrir o ficheiro da mensagem e guarda o que lá está numa caixa chamada <b>codificado</b>.<br>As linhas que começam por <code>#</code> são <b>notas</b> para pessoas: o computador salta-as.',
@@ -195,6 +197,7 @@ window.MISSAO = {
     },
     {
       facto: 'importou',
+      feito: 'O <code>import random</code> foi buscar a caixa de ferramentas <b>random</b> — aparece com 🧰 nas Caixas na memória. A ferramenta <b>randint</b> escolheu um número ao calhas entre 1 e 100, e o <code>=</code> guardou-o na caixa <b>dado</b>.<br>Para tirar o disfarce vais fazer igual, mas com outra caixa de ferramentas: a <b>base64</b>.',
       licao: true,
       titulo: 'Lição: caixas de ferramentas (import)',
       historia: 'Para tirar o disfarce vais precisar de uma ferramenta. O Python já traz centenas delas, arrumadas em <b>caixas de ferramentas</b>. Primeiro, experimenta usar uma.',
@@ -228,6 +231,7 @@ window.MISSAO = {
     },
     {
       facto: 'decoded',
+      feito: 'A ferramenta <b>b64decode</b> tirou o disfarce, o <b>.decode("utf-8")</b> transformou o resultado em letras, e o <code>print</code> mostrou a caixa <b>texto</b>.<br><b>Lê a mensagem da Marta na janela Python:</b> tem o endereço do servidor, o utilizador e uma palavra-passe… escrita ao contrário.',
       titulo: 'Tira o disfarce',
       historia: 'Já tens tudo o que precisas: sabes guardar coisas em caixas e usar ferramentas. Agora vais mudar <b>uma única palavra</b> para o Python tirar o disfarce à mensagem.',
       aprende: '<b>Base64</b> não é um segredo a sério, é só um disfarce: qualquer pessoa o tira, sem palavra-passe.<br>A caixa de ferramentas é a <b>base64</b> (vem com <code>import base64</code>) e a ferramenta que tira o disfarce chama-se <b>b64decode</b> (<i>decode</i> = descodificar).<br><br>A linha nova parece comprida, mas o Python lê-a por partes, <b>da esquerda para a direita</b>: primeiro usa a ferramenta, depois traduz o resultado, e no fim guarda tudo na caixa <b>texto</b>.',
@@ -262,6 +266,7 @@ window.MISSAO = {
     },
     {
       facto: 'senha',
+      feito: 'O <code>[::-1]</code> leu a palavra do fim para o início: <b>orucsbo_loraf</b> virou <b>farol_obscuro</b>.<br>Aponta-a: é a palavra-passe do servidor FAROL.',
       titulo: 'Vira a palavra-passe',
       historia: 'Conseguiste ler a mensagem! A Marta deixou uma conta aberta no servidor <b>FAROL</b>. Mas a palavra-passe está escrita ao contrário: <code>orucsbo_loraf</code>.',
       aprende: 'Para o Python, um texto é uma <b>fila de letras</b>. Os parênteses retos <code>[ ]</code> servem para escolher letras dessa fila.<br><code>[::-1]</code> quer dizer: “todas as letras, do fim para o início”. Ou seja, vira o texto ao contrário.<br>Exemplo: <code>"olá"[::-1]</code> dá <code>"álo"</code>.',
