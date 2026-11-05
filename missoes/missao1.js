@@ -295,7 +295,7 @@ window.MISSAO = {
       titulo: 'Entra no FAROL',
       historia: 'Tens o endereço, o utilizador e a palavra-passe. Hora de ver o que a Vigia anda a esconder.',
       aprende: '<code>ssh</code> (de <i>secure shell</i>) liga-te a outro computador pela rede, para lhe dares comandos à distância. O formato é <code>ssh utilizador@endereço</code>.',
-      tarefa: 'No terminal, escreve <code class="cmd">ssh marta@10.0.0.7</code> e, quando pedir, a palavra-passe que descobriste.',
+      tarefa: '<ol><li><b>Volta ao Terminal:</b> clica em <b>Terminal</b> na barra de tarefas, lá em baixo (ou no ícone do ambiente de trabalho).</li><li>Escreve <code class="cmd">ssh marta@10.0.0.7</code> e carrega em <kbd>Enter</kbd>.</li><li>Quando pedir a palavra-passe, escreve a que descobriste e carrega em <kbd>Enter</kbd>. As letras não aparecem enquanto escreves — é normal, é para ninguém as ver.</li></ol>',
       pista: 'A palavra-passe é o que o Python mostrou: <code>farol_obscuro</code>. Ao escrevê-la, não aparecem letras no ecrã — é normal, é para ninguém a ver por cima do teu ombro.'
     }
   ],

@@ -400,6 +400,7 @@ async function correr() {
       }
     } finally { ns.destroy(); }
     verificarPython(pyBuffer, src);
+    pySaida.scrollTop = 0;   // mostrar o resultado desde o início
   } catch (e) { /* falha de carregamento já mostrada */ }
   btnRun.disabled = false;
 }
@@ -522,7 +523,7 @@ function facto(nome) {
       desenharPassos();
       const d = document.createElement('div'); d.className = 'py-ok';
       d.innerHTML = '<b>✓ Conseguiste!</b> Vê o resultado aqui em cima e lê nas <b>Notas</b> o que aconteceu. <button data-acao="continuar">Continuar →</button>';
-      pySaida.appendChild(d); pySaida.scrollTop = pySaida.scrollHeight;
+      pySaida.appendChild(d);
       avisar('✓ Conseguiste! Lê nas notas <b>o que aconteceu</b>.', WM.ativa() === 'notas' ? null : 'Ver notas');
       marcarNovo('missao');
       return;
@@ -533,6 +534,8 @@ function facto(nome) {
 
 let saltando = false;
 function continuar() {
+  pySaida.querySelectorAll('.py-ok').forEach(x => x.remove());
+  if (E.pendente == null) return;
   E.pendente = null; gravar();
   entrarPasso(indiceAtual());
   mostrarAba('missao');
@@ -546,7 +549,7 @@ function entrarPasso(i) {
     pySaida.innerHTML = '<span class="dim">O editor tem um programa novo. Lê as notas e carrega em ▶ Executar.</span>';
     prepararPython();
     if (!WM.aberta('python')) WM.marcarNovo('python');
-  }
+  } else if (i >= 5) WM.marcarNovo('terminal');   // depois do Python, de volta ao terminal
   avisar(`➜ Próximo passo: <b>${esc(p.titulo)}</b>`, WM.ativa() === 'notas' ? null : 'Ver notas');
   marcarNovo('missao');
 }
@@ -635,7 +638,7 @@ function avisar(html, botao, acao, cls) {
   const b = el.querySelector('button');
   if (b) b.onclick = () => { el.remove(); (acao || (() => mostrarAba('missao')))(); };
   box.appendChild(el);
-  while (box.children.length > 3) box.firstChild.remove();
+  while (box.children.length > 2) box.firstChild.remove();
   setTimeout(() => el.remove(), cls === 'mail' ? 9000 : 5000);
 }
 

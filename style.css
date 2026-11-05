@@ -143,7 +143,7 @@ code.cmd:hover{background:#1f5233!important}
 .antes-depois div{background:#0d130f;color:#e6f4ea;border-radius:6px;padding:6px 9px;font:12.5px/1.5 var(--mono);overflow-x:auto;white-space:nowrap}
 .antes-depois small{display:block;font:700 10px var(--mono);letter-spacing:.1em;color:#8fb59a}
 .antes-depois .ok-l small{color:var(--verde)}
-.py-saida{flex:none;height:36%;max-height:240px;overflow:auto;border-top:1px solid var(--linha);padding:8px 14px;font:13px/1.45 var(--mono);white-space:pre-wrap;background:#080b09}
+.py-saida{flex:none;height:45%;min-height:140px;overflow:auto;border-top:1px solid var(--linha);padding:8px 14px;font:13px/1.45 var(--mono);white-space:pre-wrap;background:#080b09}
 .py-saida .dica{display:block;margin-top:6px;color:var(--amarelo);white-space:normal;font-family:var(--sans)}
 .py-saida .dica code{color:#fff}
 
@@ -322,3 +322,28 @@ code.cmd:hover{background:#1f5233!important}
 .py-ok{margin-top:10px;padding:8px 10px;border-radius:6px;background:#163b25;color:#d9ffe6;font-family:var(--sans);white-space:normal;font-size:13px}
 .py-ok button{margin-left:6px;background:var(--verde);color:#04140a;border:0;border-radius:6px;padding:4px 10px;font-weight:700}
 .ex-linha span code,.explica code:not(.cod){background:#24332a!important;color:#ffe46b;padding:1px 5px;border-radius:3px}
+
+/* o aviso de sucesso fica sempre visível no fundo da saída */
+.py-ok{position:sticky;bottom:-8px;box-shadow:0 -6px 14px #080b09}
+
+/* ecrãs baixos (portáteis): tudo um pouco mais pequeno para caber mais */
+@media (min-width:821px) and (max-height:820px){
+  :root{--barra-t:38px}
+  body{font-size:14px}
+  .jt{height:28px;font-size:12px}
+  .jt-bts button{height:19px;width:23px;font-size:12px}
+  .term{font-size:12.5px}
+  .realce,#codigo,.numeros{font-size:12.5px}
+  .py-saida{font-size:12px}
+  .py-barra{padding:4px 8px}
+  .legenda{font-size:10px;padding:3px 10px}
+  .notas{padding:10px 12px 30px 40px}
+  .passo h2{font-size:14px}
+  .passo .corpo p,.passo .tarefa{font-size:13.5px}
+  .passo .aprende,.ex-linha,.resultado,.passo .pista{font-size:13px}
+  .icone{width:76px;padding:4px 2px}
+  .icone .ico{width:36px;height:36px}
+  .icone .nome{font-size:11px}
+  .tb-app,.menu-btn,.tarefas-missao{height:28px}
+}
+@media (min-width:821px){ .avisos{top:12px;bottom:auto} }

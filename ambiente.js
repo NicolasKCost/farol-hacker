@@ -48,7 +48,7 @@ function posicionar(w, id) {
   const L = {
     notas:     [esq, m, notasW, H - 2 * m],
     terminal:  [dirX, m, dirW, meio],
-    python:    [dirX, 2 * m + meio, dirW, H - 3 * m - meio],
+    python:    [dirX, m, dirW, H - 2 * m],   // o Python ocupa a coluna toda; o Terminal fica por trás
     ficheiros: [esq + 60, 60, Math.min(660, W - esq - 80), Math.min(430, H - 100)],
     visor:     [esq + 120, 90, Math.min(620, W - esq - 140), Math.min(440, H - 120)],
     correio:   [esq + 90, 70, Math.min(760, W - esq - 110), Math.min(470, H - 100)]
