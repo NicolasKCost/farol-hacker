@@ -492,7 +492,7 @@ function facto(nome) {
     else {
       if (p.codigo) {
         porCodigo(p.codigo);
-        pySaida.innerHTML = '<span class="dim">O editor tem um programa novo. Lê as notas e carrega em ▶ Executar.</span>'; prepararPython(); if (!WM.aberta('python')) { WM.abrir('python', { semFoco: true }); WM.marcarNovo('python'); } }
+        pySaida.innerHTML = '<span class="dim">O editor tem um programa novo. Lê as notas e carrega em ▶ Executar.</span>'; prepararPython(); if (!WM.aberta('python')) WM.marcarNovo('python'); }
       avisar(`✓ Passo concluído! Próximo: <b>${esc(p.titulo)}</b>`, WM.ativa() === 'notas' ? null : 'Ver notas');
       marcarNovo('missao');
     }
@@ -704,10 +704,13 @@ $('#btnPartilhar').onclick = async () => {
 };
 
 function abrirJanelasIniciais() {
-  // no telemóvel começa pelas notas; no computador, notas + terminal lado a lado
-  if (indiceAtual() >= 5 || E.factos.b64) WM.abrir('python', { semFoco: true });
-  if (mobil()) WM.abrir('notas');
-  else { WM.abrir('notas', { semFoco: true }); WM.abrir('terminal'); }
+  // começa só com as notas: o jogador abre o Terminal e o Python pelos ícones, quando as notas mandarem
+  const i = indiceAtual();
+  if (i >= 6) WM.abrir('python', { semFoco: true });
+  if (i >= 1) WM.abrir('terminal', { semFoco: true });
+  WM.abrir('notas');
+  if (i === 0) WM.marcarNovo('terminal');
+  if (i === 5) WM.marcarNovo('python');
 }
 
 async function arrancar(novo) {

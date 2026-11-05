@@ -105,7 +105,7 @@ window.MISSAO = {
       titulo: 'Liga-te ao terminal',
       historia: 'O ecrã é preto, só com texto. Isto é um <b>terminal</b>: em vez de clicar em ícones, escreves comandos.',
       aprende: 'Num terminal escreves um comando e carregas em <kbd>Enter</kbd>. O comando <code>help</code> mostra o que este computador sabe fazer.',
-      tarefa: 'Escreve <code class="cmd">help</code> na janela do <b>Terminal</b> e carrega em <kbd>Enter</kbd>.',
+      tarefa: '<ol><li><b>Abre o Terminal:</b> no ambiente de trabalho, à esquerda, clica no ícone <b>Terminal</b> (o ecrã preto com <b>&gt;_</b>, a piscar). No telemóvel, toca em <b>Terminal</b> na barra de baixo.</li><li>Abre-se uma janela preta. Clica dentro dela, na linha que acaba em <b>$</b>.</li><li>Escreve <b>help</b> e carrega na tecla <kbd>Enter</kbd> (ou no botão <b>Enter ↵</b>).</li></ol>',
       pista: 'Toca no terminal, escreve as quatro letras h-e-l-p e carrega em Enter. Também podes tocar nos comandos com fundo verde para os escrever automaticamente.'
     },
     {
@@ -152,7 +152,7 @@ window.MISSAO = {
         ['    codificado = ficheiro.read()', '<b>read</b> lê tudo o que está no ficheiro. O sinal <b>=</b> guarda o resultado numa <b>variável</b> — uma caixa com nome — chamada <b>codificado</b>. Os 4 espaços no início dizem que esta linha pertence ao <b>with</b> de cima.'],
         ['print(codificado)', '<b>print</b> mostra no ecrã o que está dentro da caixa <b>codificado</b>.']
       ],
-      tarefa: '<ol><li>Não precisas de escrever nada: este programa já está pronto.</li><li>Na janela <b>Python</b>, carrega no botão verde <b>▶ Executar</b> (no topo da janela).</li><li>Olha para a parte de baixo da janela: vais ver a mensagem disfarçada, igual à que viste no terminal.</li></ol>',
+      tarefa: '<ol><li><b>Abre o Python:</b> no ambiente de trabalho, clica no ícone <b>Python</b> (a cobra azul e amarela, a piscar). No telemóvel, toca em <b>Python</b> na barra de baixo.</li><li>Abre-se o editor, já com um programa escrito. Não precisas de escrever nada.</li><li>Na janela <b>Python</b>, carrega no botão verde <b>▶ Executar</b> (no topo da janela).</li><li>Olha para a parte de baixo da janela: vais ver a mensagem disfarçada, igual à que viste no terminal.</li></ol>',
       pista: 'Só tens de carregar no botão verde <b>▶ Executar</b>. Da primeira vez pode demorar uns segundos, porque o Python está a ligar-se.',
       codigo:
 '# Linhas que começam por # são notas: o computador ignora-as.\n\n' +
