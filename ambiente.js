@@ -47,8 +47,8 @@ function posicionar(w, id) {
   const meio = Math.round((H - 3 * m) * 0.45);
   const L = {
     notas:     [esq, m, notasW, H - 2 * m],
-    terminal:  [dirX, m, dirW, meio],
-    python:    [dirX, m, dirW, H - 2 * m],   // o Python ocupa a coluna toda; o Terminal fica por trás
+    terminal:  [dirX, m, dirW - 28, H - 2 * m - 28],   // Terminal e Python ocupam a coluna, em cascata
+    python:    [dirX + 28, m + 28, dirW - 28, H - 2 * m - 28],
     ficheiros: [esq + 60, 60, Math.min(660, W - esq - 80), Math.min(430, H - 100)],
     visor:     [esq + 120, 90, Math.min(620, W - esq - 140), Math.min(440, H - 120)],
     correio:   [esq + 90, 70, Math.min(760, W - esq - 110), Math.min(470, H - 100)]
