@@ -153,12 +153,13 @@
       historia: 'O ecrã é preto, só com texto. Isto é um <b>terminal</b>: em vez de clicar em ícones, escreves comandos.',
       aprende: 'Num terminal escreves um comando e carregas em <kbd>Enter</kbd>. O comando <code>help</code> mostra o que este computador sabe fazer.',
       tarefa: '<ol><li><b>Abre o Terminal:</b> no ambiente de trabalho, à esquerda, clica no ícone <b>Terminal</b> (o ecrã preto com <b>&gt;_</b>, a piscar). No telemóvel, toca em <b>Terminal</b> na barra de baixo.</li><li>Abre-se uma janela preta. Clica dentro dela, na linha que acaba em <b>$</b>.</li><li>Escreve <b>help</b> e carrega na tecla <kbd>Enter</kbd> (ou no botão <b>Enter ↵</b>).</li></ol>',
-      pista: 'Toca no terminal, escreve as quatro letras h-e-l-p e carrega em Enter. Também podes tocar nos comandos com fundo verde para os escrever automaticamente.'
+      pista: 'Toca no terminal, escreve as quatro letras h-e-l-p e carrega em Enter. Também podes tocar nos comandos com fundo verde para os escrever automaticamente.',
+      feito: 'Apareceu a lista dos <b>comandos</b> que este computador conhece. Em cada linha, à esquerda está o <b>nome do comando</b> (a verde) e à direita <b>o que ele faz</b>.<br>Não te assustes com a lista: não precisas de a decorar nem de perceber tudo agora. Cada comando vai aparecer nas notas quando for preciso, e eu explico-o nessa altura.<br>Se te esqueceres de algum, escreve <code>help</code> outra vez. O primeiro que vais usar é o segundo da lista: <code>ls</code>.'
     },
     {
       facto: 'ls',
       titulo: 'Olha à tua volta',
-      historia: 'Estás dentro da pasta pessoal da Marta. Mas o que é que ela lá guardou?',
+      historia: 'Vamos começar pelo <code>ls</code>, o segundo comando da lista que o <code>help</code> te mostrou. Neste momento estás dentro da <b>pasta pessoal</b> da Marta, onde ela guardava as coisas dela. Mas o que é que lá está?',
       aprende: '<code>ls</code> (de <i>list</i>) mostra os ficheiros e pastas onde estás. As pastas aparecem a azul, terminadas em <code>/</code>.',
       tarefa: 'Escreve <code class="cmd">ls</code> para listar o conteúdo da pasta.',
       pista: 'Só as letras L e S, minúsculas: <code>ls</code>.'
