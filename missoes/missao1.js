@@ -144,9 +144,16 @@ window.MISSAO = {
       facto: 'pyCorreu',
       titulo: 'Corre o teu primeiro programa',
       historia: 'A mensagem é um monte de letras sem sentido: está <b>disfarçada</b> com uma coisa chamada <b>base64</b>. A Marta apagou o comando que a lia… mas este computador tem <b>Python</b>, uma linguagem para dar ordens ao computador.',
-      aprende: 'Um <b>programa</b> é uma lista de ordens que o computador cumpre de cima para baixo.<br>As linhas que começam por <code>#</code> são notas para pessoas: o computador ignora-as.<br>Este programa já está escrito: abre o ficheiro da mensagem e mostra-o no ecrã com <code>print()</code>.',
-      tarefa: '<ol><li>Vai à janela <b>Python</b> (já está aberta).</li><li>Carrega no botão verde <b>▶ Executar</b>, lá em cima.</li><li>O resultado aparece na parte de baixo da janela.</li></ol>',
-      pista: 'Não precisas de mudar nada no código: só carregar no botão verde <b>▶ Executar</b>. Da primeira vez pode demorar uns segundos (o Python está a ligar-se).',
+      aprende: 'Um <b>programa</b> é uma lista de ordens. O computador lê-as <b>de cima para baixo</b>, uma linha de cada vez.<br>No editor, cada parte do código tem uma <b>cor</b> diferente, para ser mais fácil de ler. A legenda das cores está por baixo do código.',
+      explicaTitulo: 'Como funciona este programa',
+      explica: [
+        ['# isto é uma nota', 'Linhas que começam por <b>#</b> são <b>notas</b> para pessoas. O computador salta-as.'],
+        ['with open("/home/marta/.segredo/mensagem.b64") as ficheiro:', '<b>open</b> é uma <b>função</b> (uma ação): abre o ficheiro cujo caminho está entre aspas. Enquanto está aberto, chamamos-lhe <b>ficheiro</b>.'],
+        ['    codificado = ficheiro.read()', '<b>read</b> lê tudo o que está no ficheiro. O sinal <b>=</b> guarda o resultado numa <b>variável</b> — uma caixa com nome — chamada <b>codificado</b>. Os 4 espaços no início dizem que esta linha pertence ao <b>with</b> de cima.'],
+        ['print(codificado)', '<b>print</b> mostra no ecrã o que está dentro da caixa <b>codificado</b>.']
+      ],
+      tarefa: '<ol><li>Não precisas de escrever nada: este programa já está pronto.</li><li>Na janela <b>Python</b>, carrega no botão verde <b>▶ Executar</b> (no topo da janela).</li><li>Olha para a parte de baixo da janela: vais ver a mensagem disfarçada, igual à que viste no terminal.</li></ol>',
+      pista: 'Só tens de carregar no botão verde <b>▶ Executar</b>. Da primeira vez pode demorar uns segundos, porque o Python está a ligar-se.',
       codigo:
 '# Linhas que começam por # são notas: o computador ignora-as.\n\n' +
 '# 1. Abrir o ficheiro da mensagem e guardar o que lá está\n' +
@@ -159,23 +166,32 @@ window.MISSAO = {
     {
       facto: 'decoded',
       titulo: 'Tira o disfarce',
-      historia: 'Funcionou: o programa leu a mensagem. Mas ela continua disfarçada. Vamos pedir ao Python para tirar o disfarce.',
-      aprende: '<b>Base64</b> não é segredo a sério, é só um disfarce: qualquer pessoa o desfaz, sem palavra-passe.<br>O Python já traz uma ferramenta para isso, chamada <code>b64decode</code> (<i>decode</i> = descodificar).',
-      tarefa: '<ol><li>Na janela <b>Python</b>, encontra a linha com <code>???</code> (tem uma 👉 por cima).</li><li>Apaga os três pontos de interrogação.</li><li>No lugar deles, escreve <code>b64decode</code></li><li>Carrega em <b>▶ Executar</b>.</li></ol>',
-      pista: 'A linha tem de ficar exatamente assim:<br><code>texto = base64.b64decode(codificado).decode("utf-8")</code><br>Se não conseguires, carrega em <b>✍ Escrever por mim</b> e depois em ▶ Executar.',
+      historia: 'O programa leu a mensagem, mas ela continua disfarçada. Agora vais mudar <b>uma única palavra</b> no programa para o Python tirar o disfarce.',
+      aprende: '<b>Base64</b> não é um segredo a sério, é só um disfarce: qualquer pessoa o tira, sem palavra-passe.<br><br>O Python tem <b>caixas de ferramentas</b>, chamadas <b>módulos</b>. A primeira linha, <code>import base64</code>, vai buscar a caixa <b>base64</b>. Lá dentro há uma ferramenta chamada <b>b64decode</b>, que tira o disfarce (<i>decode</i> = descodificar).<br><br>Para usar uma ferramenta de uma caixa, escreve-se <b>caixa.ferramenta</b>, com um ponto no meio: <code>base64.b64decode</code>.',
+      explicaTitulo: 'A linha que vais completar, peça a peça',
+      explica: [
+        ['texto =', 'Cria uma caixa nova chamada <b>texto</b>, para guardar o resultado.'],
+        ['base64.', 'Vai à caixa de ferramentas <b>base64</b>. Já está escrito: não mexas.'],
+        ['???', '<b>Aqui falta o nome da ferramenta.</b> É isto que vais trocar por <b>b64decode</b>.'],
+        ['(codificado)', 'Entrega à ferramenta a mensagem disfarçada que está na caixa <b>codificado</b>.'],
+        ['.decode("utf-8")', 'Transforma o resultado em letras normais, com acentos.']
+      ],
+      tarefa: '<ol><li>Na janela <b>Python</b>, procura a linha com <span class="falta">???</span> (está a piscar a amarelo).</li><li>Clica logo a seguir ao último <b>?</b> — entre o <b>?</b> e o <b>(</b>.</li><li>Carrega <b>3 vezes</b> na tecla <kbd>⌫</kbd> (Backspace, a tecla de apagar) para apagar os três <b>?</b>.</li><li>Escreve <b>b64decode</b> — só isso. O <b>base64.</b> antes já lá está, não o escrevas outra vez.</li><li>Carrega em <b>▶ Executar</b>.</li></ol>',
+      antesDepois: ['texto = base64.<mark>???</mark>(codificado).decode("utf-8")', 'texto = base64.<mark>b64decode</mark>(codificado).decode("utf-8")'],
+      pista: 'O engano mais comum é escrever <code>base64.base64decode</code>. O nome da ferramenta é <b>b64decode</b> (começa por <b>b64</b>). A linha completa fica:<br><code>texto = base64.b64decode(codificado).decode("utf-8")</code><br>Se aparecer um erro, carrega no botão <b>✍ Corrigir por mim</b> e compara o antes e o depois.',
       codigo:
 'import base64\n\n' +
 'with open("/home/marta/.segredo/mensagem.b64") as ficheiro:\n' +
 '    codificado = ficheiro.read()\n\n' +
 '# Tirar o disfarce.\n' +
-'# 👉 Na linha de baixo, troca os 3 pontos de interrogação por b64decode\n' +
+'# 👉 Na linha de baixo, troca os pontos de interrogação por b64decode\n' +
 'texto = base64.???(codificado).decode("utf-8")\n\n' +
 'print(texto)\n',
       solucao:
 'import base64\n\n' +
 'with open("/home/marta/.segredo/mensagem.b64") as ficheiro:\n' +
 '    codificado = ficheiro.read()\n\n' +
-'# Tirar o disfarce.\n' +
+'# Tirar o disfarce com a ferramenta b64decode da caixa base64\n' +
 'texto = base64.b64decode(codificado).decode("utf-8")\n\n' +
 'print(texto)\n'
     },
@@ -183,9 +199,16 @@ window.MISSAO = {
       facto: 'senha',
       titulo: 'Vira a palavra-passe',
       historia: 'Conseguiste ler a mensagem! A Marta deixou uma conta aberta no servidor <b>FAROL</b>. Mas a palavra-passe está escrita ao contrário: <code>orucsbo_loraf</code>.',
-      aprende: 'Em Python, <code>[::-1]</code> lê um texto de trás para a frente.<br>Exemplo: <code>"olá"[::-1]</code> dá <code>"álo"</code>.',
-      tarefa: '<ol><li>Na janela <b>Python</b> há um programa novo, com a palavra-passe guardada na caixa <code>senha</code>.</li><li>Na última linha, muda <code>print(senha)</code> para <code>print(senha[::-1])</code></li><li>Carrega em <b>▶ Executar</b> e aponta a palavra que aparecer.</li></ol>',
-      pista: 'Escreve <code>[::-1]</code> logo a seguir a <code>senha</code>, dentro dos parênteses: <code>print(senha[::-1])</code>. Atenção: são dois pontos, dois pontos, menos, um.',
+      aprende: 'Para o Python, um texto é uma <b>fila de letras</b>. Os parênteses retos <code>[ ]</code> servem para escolher letras dessa fila.<br><code>[::-1]</code> quer dizer: “todas as letras, do fim para o início”. Ou seja, vira o texto ao contrário.<br>Exemplo: <code>"olá"[::-1]</code> dá <code>"álo"</code>.',
+      explicaTitulo: 'O programa novo, linha a linha',
+      explica: [
+        ['senha = "orucsbo_loraf"', 'Guarda o <b>texto</b> (o que está entre aspas) numa caixa chamada <b>senha</b>.'],
+        ['print(senha)', 'Mostra a senha tal como está — ainda ao contrário.'],
+        ['print(senha[::-1])', 'Mostra a senha <b>virada</b>. É assim que a última linha tem de ficar.']
+      ],
+      tarefa: '<ol><li>Na janela <b>Python</b> há agora um programa novo e curto.</li><li>Na última linha, clica logo a seguir à palavra <b>senha</b> — antes do <b>)</b>.</li><li>Escreve <b>[::-1]</b>: parêntese reto, dois pontos, dois pontos, menos, um, parêntese reto.</li><li>Carrega em <b>▶ Executar</b>. A palavra que aparecer é a palavra-passe: aponta-a!</li></ol>',
+      antesDepois: ['print(senha)', 'print(senha<mark>[::-1]</mark>)'],
+      pista: 'A última linha tem de ficar exatamente: <code>print(senha[::-1])</code><br>No teclado do computador (português), os parênteses retos fazem-se com <kbd>AltGr</kbd> + <kbd>8</kbd> e <kbd>AltGr</kbd> + <kbd>9</kbd>. No telemóvel, estão no teclado de símbolos (<b>?123</b>).',
       codigo:
 '# A palavra-passe da Marta, escrita ao contrário\n' +
 'senha = "orucsbo_loraf"\n\n' +
@@ -194,7 +217,7 @@ window.MISSAO = {
       solucao:
 '# A palavra-passe da Marta, escrita ao contrário\n' +
 'senha = "orucsbo_loraf"\n\n' +
-'# [::-1] lê o texto de trás para a frente\n' +
+'# [::-1] lê o texto do fim para o início\n' +
 'print(senha[::-1])\n'
     },
     {

@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=6">
+<link rel="stylesheet" href="style.css?v=8">
 </head>
 <body>
 
@@ -86,7 +86,18 @@
       </div>
       <div class="editor">
         <pre class="numeros" id="numeros" aria-hidden="true">1</pre>
-        <textarea id="codigo" spellcheck="false" autocapitalize="off" autocorrect="off" aria-label="Editor de código Python"></textarea>
+        <div class="campo">
+          <pre class="realce" id="realce" aria-hidden="true"></pre>
+          <textarea id="codigo" spellcheck="false" autocapitalize="off" autocorrect="off" aria-label="Editor de código Python"></textarea>
+        </div>
+      </div>
+      <div class="legenda" aria-label="O que significa cada cor">
+        <span class="c-com">nota (o PC ignora)</span>
+        <span class="c-txt">"texto"</span>
+        <span class="c-var">variável (caixa)</span>
+        <span class="c-fn">função (ação)</span>
+        <span class="c-mod">módulo (caixa de ferramentas)</span>
+        <span class="c-kw">palavra do Python</span>
       </div>
       <div class="py-saida" id="pySaida"><span class="dim">A saída do teu programa aparece aqui.</span></div>
     </div>
@@ -188,8 +199,8 @@
   </div>
 </div>
 
-<script src="missoes/missao1.js?v=6"></script>
-<script src="ambiente.js?v=6"></script>
-<script src="jogo.js?v=6"></script>
+<script src="missoes/missao1.js?v=8"></script>
+<script src="ambiente.js?v=8"></script>
+<script src="jogo.js?v=8"></script>
 </body>
 </html>

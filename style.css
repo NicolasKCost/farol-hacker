@@ -119,7 +119,30 @@ code.cmd:hover{background:#1f5233!important}
 .btn-run:disabled{opacity:.6;cursor:wait}
 .editor{flex:1;display:flex;min-height:0}
 .numeros{margin:0;padding:10px 8px 10px 10px;color:#4b5f51;font:14px/1.5 var(--mono);text-align:right;user-select:none;overflow:hidden;min-width:36px}
-#codigo{flex:1;resize:none;border:0;outline:0;background:none;color:#e6f4ea;font:14px/1.5 var(--mono);padding:10px 12px 10px 4px;tab-size:4;white-space:pre;overflow:auto}
+.campo{flex:1;position:relative;min-width:0}
+.realce,#codigo{position:absolute;inset:0;margin:0;border:0;font:14px/1.5 var(--mono);padding:10px 12px 10px 4px;tab-size:4;white-space:pre;overflow:auto;letter-spacing:0}
+.realce{color:#e6f4ea;pointer-events:none;scrollbar-width:none}
+.realce::-webkit-scrollbar{display:none}
+#codigo{resize:none;outline:0;background:none;color:transparent;caret-color:#fff;-webkit-text-fill-color:transparent}
+#codigo::selection{background:#3b78b066;-webkit-text-fill-color:transparent}
+.c-com{color:#7d8b80;font-style:italic}
+.c-txt{color:#ffb86b}
+.c-var{color:#7cc7ff}
+.c-fn{color:#ffe46b}
+.c-mod{color:#4ee0b5}
+.c-kw{color:#d39bff;font-weight:600}
+.c-num{color:#a6e22e}
+.c-falta{background:#ffd166;color:#1a1300;border-radius:3px;font-weight:700;animation:falta 1.2s ease-in-out infinite}
+@keyframes falta{50%{background:#ff9f1c}}
+.legenda{flex:none;display:flex;flex-wrap:wrap;gap:4px 12px;padding:5px 12px;background:#0a0f0b;border-top:1px solid var(--linha);font:11px var(--mono)}
+.legenda span::before{content:'■ '}
+.legenda .c-com{font-style:normal}
+.btn-corrigir{margin-top:8px;background:#ffd166;color:#1a1300;border:0;border-radius:6px;padding:5px 12px;font:700 12px var(--sans)}
+.passo .falta,.antes-depois mark{background:#ffd166;color:#1a1300;border-radius:3px;padding:0 3px;font-weight:700}
+.antes-depois{display:grid;gap:6px;margin-top:10px}
+.antes-depois div{background:#0d130f;color:#e6f4ea;border-radius:6px;padding:6px 9px;font:12.5px/1.5 var(--mono);overflow-x:auto;white-space:nowrap}
+.antes-depois small{display:block;font:700 10px var(--mono);letter-spacing:.1em;color:#8fb59a}
+.antes-depois .ok-l small{color:var(--verde)}
 .py-saida{flex:none;height:36%;max-height:240px;overflow:auto;border-top:1px solid var(--linha);padding:8px 14px;font:13px/1.45 var(--mono);white-space:pre-wrap;background:#080b09}
 .py-saida .dica{display:block;margin-top:6px;color:var(--amarelo);white-space:normal;font-family:var(--sans)}
 .py-saida .dica code{color:#fff}
@@ -248,6 +271,7 @@ code.cmd:hover{background:#1f5233!important}
   .teclas{display:flex}
   .term{font-size:13px}
   #cmd{font-size:16px} /* evita zoom no iOS */
+  .realce,#codigo,.numeros{font-size:16px} /* evita zoom no iOS */
   .notas{padding-left:40px}
   .correio{flex-direction:column}
   .mail-lista{width:100%;max-width:none;border-right:0;flex:1}
@@ -259,3 +283,12 @@ code.cmd:hover{background:#1f5233!important}
   .cartao{padding:22px 18px}
   .cartao h1{font-size:22px}
 }
+
+/* explicação peça a peça, com as cores do editor */
+.explica{background:#0d130f;border-radius:8px;padding:8px 10px;margin:10px 0;color:#d6e7da}
+.explica-tit{font:700 10px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#8fb59a;margin-bottom:6px}
+.ex-linha{display:grid;gap:3px;padding:6px 0;border-top:1px solid #1d2a21;font-size:13.5px;line-height:1.45}
+.ex-linha:first-of-type{border-top:0}
+.ex-linha .cod{background:none!important;padding:0;font-size:13px;white-space:pre-wrap;word-break:break-all;color:#e6f4ea}
+.ex-linha b{color:#fff}
+.explica .c-falta{padding:0 2px}

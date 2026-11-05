@@ -353,7 +353,7 @@ const DICAS = [
   [/SyntaxError/, 'Erro de sintaxe: falta ou sobra algum símbolo (aspas, parênteses, dois pontos). Vê a linha indicada.'],
   [/IndentationError/, 'Erro de indentação: no Python os espaços no início da linha contam. Linhas dentro de um <code>with</code> levam 4 espaços.'],
   [/NameError: name '(\w+)'/, m => `O Python não conhece <code>${esc(m[1])}</code>. Escreveste bem o nome? Se for texto, põe-no entre aspas.`],
-  [/AttributeError: module 'base64' has no attribute '(\w+)'/, m => `O módulo base64 não tem nenhuma função <code>${esc(m[1])}</code>. A que descodifica chama-se <code>b64decode</code>.`],
+  [/AttributeError: module 'base64' has no attribute '(\w+)'/, m => `Escreveste <code>base64.${esc(m[1])}</code>, mas a caixa de ferramentas <code>base64</code> não tem nenhuma ferramenta com esse nome.<br>O nome certo é <code>b64decode</code> — começa por <b>b64</b>, sem a palavra “base”. O <code>base64.</code> antes já lá estava, não se repete.<br>A linha tem de ficar assim:<br><code>texto = base64.b64decode(codificado).decode("utf-8")</code>`],
   [/FileNotFoundError/, 'Ficheiro não encontrado. Confirma o caminho: <code>/home/marta/.segredo/mensagem.b64</code>'],
   [/binascii\.Error|Incorrect padding|Invalid base64/, 'Isso não é base64 válido. Estás a descodificar o conteúdo do ficheiro mensagem.b64?'],
   [/UnicodeDecodeError/, 'Esses bytes não são texto. Estás a ler o ficheiro certo?']
@@ -390,6 +390,13 @@ async function correr() {
         const m = msg.match(re);
         if (m) { const s = document.createElement('span'); s.className = 'dica'; s.innerHTML = '💡 ' + (typeof d === 'function' ? d(m) : d); pySaida.appendChild(s); break; }
       }
+      // num passo com solução, oferecer correção automática
+      const passo = M.passos[indiceAtual()];
+      if (passo && passo.solucao) {
+        const b = document.createElement('button'); b.className = 'btn-corrigir'; b.textContent = '✍ Corrigir por mim';
+        b.onclick = () => { porCodigo(passo.solucao); pySaida.innerHTML = '<span class="dica">✓ Código corrigido. Vê o que mudou e carrega em ▶ Executar.</span>'; };
+        pySaida.appendChild(b);
+      }
     } finally { ns.destroy(); }
     verificarPython(pyBuffer);
   } catch (e) { /* falha de carregamento já mostrada */ }
@@ -402,14 +409,44 @@ function verificarPython(out) {
   if (/farol_obscuro/.test(out)) facto('senha');
 }
 
+/* cores do código: comentário, texto, variável, função, palavra do Python, módulo */
+const realce = $('#realce');
+const PALAVRAS = new Set(['import', 'from', 'as', 'with', 'def', 'return', 'for', 'in', 'if', 'elif', 'else', 'while', 'and', 'or', 'not', 'True', 'False', 'None', 'try', 'except', 'class', 'is', 'break', 'continue', 'pass', 'lambda']);
+const RE_PY = /(#[^\n]*)|("(?:[^"\\\n]|\\.)*"?|'(?:[^'\\\n]|\\.)*'?)|(\?\?\?)|\b(\d+(?:\.\d+)?)\b|\b([A-Za-z_]\w*)\b(?=(\s*\()?)/g;
+function colorir(src) {
+  const modulos = new Set(['base64', 'os', ...[...src.matchAll(/^\s*import\s+(\w+)/gm)].map(m => m[1])]);
+  let out = '', i = 0, m;
+  RE_PY.lastIndex = 0;
+  while ((m = RE_PY.exec(src))) {
+    if (!m[0]) { RE_PY.lastIndex++; continue; }
+    out += esc(src.slice(i, m.index));
+    let cls;
+    if (m[1]) cls = 'c-com';
+    else if (m[2]) cls = 'c-txt';
+    else if (m[3]) cls = 'c-falta';
+    else if (m[4]) cls = 'c-num';
+    else if (PALAVRAS.has(m[5])) cls = 'c-kw';
+    else if (m[6] !== undefined) cls = 'c-fn';
+    else if (modulos.has(m[5])) cls = 'c-mod';
+    else cls = 'c-var';
+    out += `<span class="${cls}">${esc(m[0])}</span>`;
+    i = m.index + m[0].length;
+  }
+  return out + esc(src.slice(i)) + '\n';
+}
 function atualizarNumeros() {
   const n = codigo.value.split('\n').length;
   let s = ''; for (let i = 1; i <= n; i++) s += i + '\n';
   numeros.textContent = s;
+  realce.innerHTML = colorir(codigo.value);
+  sincronizarScroll();
+}
+function sincronizarScroll() {
   numeros.scrollTop = codigo.scrollTop;
+  realce.scrollTop = codigo.scrollTop; realce.scrollLeft = codigo.scrollLeft;
 }
 codigo.addEventListener('input', () => { atualizarNumeros(); E.codigo = codigo.value; gravar(); });
-codigo.addEventListener('scroll', () => { numeros.scrollTop = codigo.scrollTop; });
+codigo.addEventListener('scroll', sincronizarScroll);
 codigo.addEventListener('focus', prepararPython, { once: true });
 codigo.addEventListener('keydown', e => {
   if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); correr(); return; }
@@ -472,7 +509,8 @@ function desenharPassos() {
       <div class="corpo">
         <p>${p.historia}</p>
         <div class="aprende">${p.aprende}</div>
-        <div class="tarefa">${p.tarefa}</div>
+        ${p.explica ? `<div class="explica"><div class="explica-tit">🔍 ${esc(p.explicaTitulo || 'Como funciona')}</div>${p.explica.map(([c, t]) => `<div class="ex-linha"><code class="cod">${colorir(c).replace(/\n$/, '')}</code><span>${t}</span></div>`).join('')}</div>` : ''}
+        <div class="tarefa">${p.tarefa}${p.antesDepois ? `<div class="antes-depois"><div><small>ANTES</small>${p.antesDepois[0]}</div><div class="ok-l"><small>DEPOIS</small>${p.antesDepois[1]}</div></div>` : ''}</div>
         <div class="acoes">
           <button data-acao="pista">💡 Pista</button>
           ${p.solucao ? '<button data-acao="solucao">✍ Escrever por mim</button>' : ''}
