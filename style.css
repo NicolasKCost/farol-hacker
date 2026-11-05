@@ -374,3 +374,14 @@ code.cmd:hover{background:#1f5233!important}
 .rede-pc.srv{background:#16241b;border-color:#2e7d4f;color:#d6e7da}
 .rede-pc.srv span{color:#9fc4a9}
 .rede-seta{display:flex;gap:6px;align-items:center;padding-left:14px;font:11px var(--mono);color:#6b5d3d}
+
+/* receita (analogia do for) e desenho do recuo */
+.receita{display:flex;flex-direction:column;background:#fff;border:1px solid #c9b98f;border-radius:6px;padding:6px 10px;margin:6px 0;font-size:13px;line-height:1.5}
+.receita .dentro{padding-left:22px;border-left:3px solid #2e7d4f;margin-left:4px}
+.recuo{display:flex;flex-direction:column;gap:2px;background:#0d130f;border-radius:8px;padding:8px 10px;margin:8px 0}
+.recuo div{display:flex;flex-direction:column;padding:2px 6px;border-radius:4px}
+.recuo div.rep{background:#173322;border-left:3px solid #3ddc84}
+.recuo code{background:none!important;color:#e6f4ea;font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere}
+.recuo i{font-style:normal;font-size:11px;color:#9fc4a9}
+.recuo div.rep i{color:#3ddc84}
+.esp{color:#ffb347;font-weight:700;letter-spacing:1px}
