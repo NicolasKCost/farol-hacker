@@ -147,7 +147,7 @@ function pararAtaque() { clearInterval(ataque); ataque = null; }
       titulo: 'Procura as falhas',
       historia: `São ${LINHAS} linhas. Ler tudo à mão demorava horas. Felizmente, o terminal tem uma lupa.`,
       aprende: '<code>grep</code> procura uma palavra num ficheiro e mostra <b>só as linhas que a têm</b>.<br>Quando alguém erra a palavra-passe, o servidor escreve <b>Failed password</b>. Atenção: o grep distingue maiúsculas de minúsculas — <code>Failed</code> não é o mesmo que <code>failed</code>.',
-      tarefa: '<ol><li>Escreve <code class="cmd">grep Failed auth.log</code> e carrega em Enter.</li><li>Olha para os endereços IP (depois de <b>from</b>): repara que um deles aparece vezes sem conta.</li></ol>',
+      tarefa: '<ol><li>Escreve <code class="cmd">grep Failed auth.log</code> e carrega em Enter.</li><li>Desce até ao fim do que apareceu e lê a <b>última linha, a amarelo</b>: diz quantas falhas o grep encontrou ao todo.</li></ol>',
       pista: 'Escreve exatamente <code>grep Failed auth.log</code>, com F maiúsculo. As palavras encontradas aparecem a vermelho.'
     },
     {
@@ -155,7 +155,7 @@ function pararAtaque() { clearInterval(ataque); ataque = null; }
       abre: 'python',
       licao: true,
       titulo: 'Lição: listas e repetições (for)',
-      historia: 'São centenas de falhas, demasiadas para contar à mão. Vais pôr o Python a trabalhar. Primeiro, duas ideias que vais usar muito: <b>listas</b> e <b>for</b>.',
+      historia: 'O que acabaste de ver: o grep encontrou <b>702 falhas</b>, mas o ecrã só mostra as primeiras 60. Cada falha tem um endereço IP (o número depois de <b>from</b>), que diz <b>de que computador</b> veio a tentativa. A pergunta que interessa é: <b>há algum endereço que aparece muitas mais vezes do que os outros?</b> Se houver, é provável que seja o atacante.<br>Ler 702 linhas e contar à mão seria impossível. Vais pôr o Python a contar por ti. Primeiro, duas ideias que vais usar muito: <b>listas</b> e <b>for</b>.',
       aprende: 'Uma <b>lista</b> é uma caixa com várias coisas lá dentro, <b>por ordem</b>, entre parênteses retos <code>[ ]</code> e separadas por vírgulas:' +
         '<div class="caixas"><div class="caixa"><span class="etq">suspeitos</span><span class="val">["Rui", "Ana", "Pedro"]</span></div></div>' +
         '<b>for</b> quer dizer “para cada”: repete as linhas de dentro <b>uma vez para cada coisa</b> da lista. Em cada volta, a coisa da vez fica guardada numa caixa (aqui, <code>pessoa</code>).<br>As linhas <b>de dentro</b> do for começam com <b>4 espaços</b>. Uma linha sem espaços já está fora: só corre no fim.',
