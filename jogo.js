@@ -858,6 +858,49 @@ function abrirJanelasIniciais() {
   if (p && M.aoEntrarPasso && E.pendente == null) M.aoEntrarPasso(p, API);
 }
 
+// ecrã preto de arranque, linha a linha; um clique ou uma tecla salta
+async function ecraArranque() {
+  const sp = $('#splash'), txt = $('#bootTxt');
+  txt.innerHTML = ''; sp.hidden = false;
+  let saltar = false;
+  const salta = () => { saltar = true; };
+  sp.addEventListener('click', salta); document.addEventListener('keydown', salta);
+  const pausa = async ms => { const fim = Date.now() + ms; while (!saltar && Date.now() < fim) await espera(40); };
+  for (const [t, c, ms] of (M.arranque || [])) {
+    if (saltar) break;
+    const el = document.createElement('div');
+    el.className = 'bl ' + (c || '');
+    el.textContent = t || ' ';
+    txt.appendChild(el);
+    if (c === 'mem') {
+      for (let kb = 0; kb <= 524288 && !saltar; kb += 32768) { el.textContent = `Memória: ${kb} KB`; await pausa(45); }
+      el.textContent = 'Memória: 524288 KB  OK';
+    } else if (c === 'pontos') {
+      el.textContent = '';
+      for (let k = 0; k < t.length && !saltar; k++) { el.textContent += '.'; await pausa(160); }
+    }
+    await pausa(ms || 0);
+  }
+  sp.removeEventListener('click', salta); document.removeEventListener('keydown', salta);
+  sp.classList.add('a-sair'); await espera(400);
+  sp.hidden = true; sp.classList.remove('a-sair');
+}
+
+// o ambiente de trabalho aparece vazio; um programa de arranque abre as notas
+async function abrirPorPrograma() {
+  const prog = M.notas && M.notas.programa, fich = (M.notas && M.notas.ficheiro) || 'notas.txt';
+  await espera(900);
+  const caixa = document.createElement('div');
+  caixa.className = 'prog-arranque';
+  caixa.innerHTML = prog
+    ? `<div class="pa-tit">⚙ ${esc(prog)}</div><div>Programa de arranque a correr…</div><div class="pa-acao">→ a abrir <b>${esc(fich)}</b></div>`
+    : `<div class="pa-tit">📎 Anexo recebido</div><div class="pa-acao">→ a abrir <b>${esc(fich)}</b></div>`;
+  document.body.appendChild(caixa);
+  await espera(2300);
+  caixa.classList.add('a-sair'); await espera(300); caixa.remove();
+  abrirJanelasIniciais();
+}
+
 async function arrancar(novo) {
   $('#ecraIntro').hidden = true;
   if (novo || !E.comecou) {
@@ -867,13 +910,11 @@ async function arrancar(novo) {
     porCodigo(CODIGO_INICIAL);
     desenharPassos(); atualizarPrompt(); fmOcultos.checked = false; fmIr(M.home); desenharCorreio();
     ocupado = true;
-    $('#splash').hidden = false;
-    await espera(1400);
-    $('#splash').hidden = true;
+    await ecraArranque();
     WM.relogio(E.inicio, M.relogio);
-    abrirJanelasIniciais();
+    for (const [t, c] of M.boot) linha(t, c);
+    await abrirPorPrograma();
     if (!mobil()) cmd.focus({ preventScroll: true });
-    for (const [t, c] of M.boot) { linha(t, c); await espera(220); }
     ocupado = false;
     gravar();
   } else {

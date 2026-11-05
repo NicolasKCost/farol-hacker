@@ -13,11 +13,12 @@
 
   notas: {
     ficheiro: 'para_quem_encontrar.txt',
-    carta: '<p>Se estás a ler isto, alguém voltou a ligar o computador da Marta. Ela já não está cá para o fazer.</p>' +
-      '<p>Não sei quem és, nem quanto sabes de computadores. Por isso vou ensinar-te tudo desde o início: como mexer no terminal, como ler os ficheiros dela e como pôr o Python a trabalhar por ti.</p>' +
-      '<p>A Marta descobriu uma coisa sobre o servidor <b>FAROL</b> e sobre a empresa onde trabalhava, a <b>Vigia</b>. Preciso que alguém acabe o que ela começou.</p>' +
-      '<p>Deixei-te os passos aqui em baixo. Faz um de cada vez: quando acabares um, o seguinte abre-se.</p>' +
-      '<p class="assina">— M.</p>'
+    programa: 'abrir_ao_ligar.sh',
+    carta: '<p>Olá. Sou a <b>Marta</b>, a dona deste computador.</p>' +
+      '<p>Escrevi isto em março de 2009 e deixei-o programado para se abrir sozinho sempre que o computador ligar. Se o estás a ler, é porque eu não consegui acabar o que comecei e o computador foi parar às tuas mãos.</p>' +
+      '<p>Descobri uma coisa grave no servidor <b>FAROL</b>, da empresa onde trabalho, a <b>Vigia</b>. Não te posso contar tudo aqui: tens de o ver com os teus olhos.</p>' +
+      '<p>Não sei quem és nem quanto sabes de computadores. Por isso deixei-te os passos aqui em baixo, explicados desde o início. Faz um de cada vez: quando acabares um, o seguinte abre-se.</p>' +
+      '<p class="assina">— Marta</p>'
   },
 
   intro: [
@@ -25,6 +26,26 @@
     'Em casa, ligas o computador. O ventilador ronca, o ecrã acende... e abre-se uma sessão de alguém chamado <b>marta</b>. O relógio está parado em março de 2009.',
     'No meio do ecrã, um ficheiro de texto abre-se sozinho. Chama-se <b>para_quem_encontrar.txt</b>.',
     'Não precisas de saber nada de informática. Vais aprender a mexer num terminal Linux e a escrever o teu primeiro código em Python, passo a passo.'
+  ],
+
+  // ecrã de arranque: [texto, classe, pausa depois em ms]; 'mem' conta a memória
+  arranque: [
+    ['', '', 500],
+    ['BIOS Phoenix v1.02  ·  (c) 2006', 'dim', 500],
+    ['Memória: ', 'mem', 300],
+    ['A procurar discos ...', 'dim', 900],
+    ['  Disco 0: ST380011A  80 GB', 'dim', 600],
+    ['', '', 200],
+    ['A arrancar Linux 2.6.28 ...', 'dim', 1100],
+    ['[ OK ] Disco /dev/sda1 montado', 'ok', 350],
+    ['[ !! ] O computador não foi desligado corretamente. A verificar o disco', 'warn', 0],
+    ['.........', 'pontos', 300],
+    ['[ OK ] Disco verificado: nada se perdeu', 'ok', 400],
+    ['[ OK ] Rede: eth0 ligada (10.0.0.23)', 'ok', 350],
+    ['[ !! ] Relógio do sistema: sex 20 mar 2009 23:58 (a pilha está fraca)', 'warn', 500],
+    ['[ OK ] Ambiente gráfico iniciado', 'ok', 500],
+    ['', '', 200],
+    ['sotao login: marta (sessão automática)', 'dim', 1000]
   ],
 
   boot: [
@@ -47,6 +68,18 @@
 'Se o encontraste, por favor não o formates.\n' +
 'Há aqui coisas que alguém tem de ver.\n\n' +
 'Começa pela pasta "documentos".\n',
+        'para_quem_encontrar.txt':
+'Olá. Sou a Marta, a dona deste computador.\n\n' +
+'Escrevi isto em março de 2009 e deixei-o programado para se abrir\n' +
+'sozinho sempre que o computador ligar. Se o estás a ler, é porque\n' +
+'eu não consegui acabar o que comecei.\n\n' +
+'Os passos estão na janela das Notas.\n\n— Marta\n',
+        '.abrir_ao_ligar.sh':
+'#!/bin/sh\n' +
+'# Marta, 20/03/2009\n' +
+'# Corre sozinho sempre que o computador liga:\n' +
+'# abre a minha carta para quem encontrar este computador.\n' +
+'notas ~/para_quem_encontrar.txt\n',
         documentos: {
           'diario.txt':
 '12/03/2009\n' +
