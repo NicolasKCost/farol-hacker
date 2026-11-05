@@ -268,11 +268,13 @@ function completar() {
   }
 }
 
-$('#formCmd').addEventListener('submit', e => {
+const livre = async () => { while (ocupado) await espera(100); };
+$('#formCmd').addEventListener('submit', async e => {
   e.preventDefault();
-  if (ocupado) return;
   const v = cmd.value; cmd.value = '';
+  await livre();          // se o computador ainda está a arrancar, o comando espera e corre a seguir
   executar(v);
+  if (!mobil()) cmd.focus({ preventScroll: true });
 });
 cmd.addEventListener('keydown', e => {
   if (e.key === 'Tab') { e.preventDefault(); completar(); }
@@ -359,6 +361,14 @@ const DICAS = [
 
 async function correr() {
   const src = codigo.value;
+  if (cmd.value.trim() && (src === CODIGO_INICIAL || !M.passos[indiceAtual()] || !['decoded','senha'].includes(M.passos[indiceAtual()].facto))) {
+    pySaida.innerHTML = '';
+    const s = document.createElement('span'); s.className = 'dica';
+    s.innerHTML = `💡 Tens <code>${esc(cmd.value.trim())}</code> escrito no <b>terminal</b> (em cima), mas ainda não foi enviado. Clica no terminal e carrega em <kbd>Enter</kbd> — este botão ▶ Executar é só para código Python.`;
+    pySaida.appendChild(s);
+    mostrarAba('terminal'); cmd.focus({ preventScroll: true });
+    return;
+  }
   pySaida.innerHTML = ''; pyBuffer = '';
   btnRun.disabled = true;
   try {
@@ -555,6 +565,7 @@ async function arrancar(novo) {
     porCodigo(CODIGO_INICIAL);
     desenharPassos(); atualizarPrompt();
     ocupado = true;
+    if (!mobil()) cmd.focus({ preventScroll: true });
     for (const [t, c] of M.boot) { linha(t, c); await espera(220); }
     ocupado = false;
     gravar();

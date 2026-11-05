@@ -84,7 +84,7 @@ window.MISSAO = {
       titulo: 'Liga-te ao terminal',
       historia: 'O ecrã é preto, só com texto. Isto é um <b>terminal</b>: em vez de clicar em ícones, escreves comandos.',
       aprende: 'Num terminal escreves um comando e carregas em <kbd>Enter</kbd>. O comando <code>help</code> mostra o que este computador sabe fazer.',
-      tarefa: 'Escreve <code class="cmd">help</code> no terminal.',
+      tarefa: 'Escreve <code class="cmd">help</code> no terminal (a janela preta de cima) e carrega em <kbd>Enter</kbd>.',
       pista: 'Toca no terminal, escreve as quatro letras h-e-l-p e carrega em Enter. Também podes tocar nos comandos com fundo verde para os escrever automaticamente.'
     },
     {

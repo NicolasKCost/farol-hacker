@@ -80,6 +80,8 @@ a{color:var(--verde)}
 .linha{display:flex;gap:8px;align-items:baseline}
 .prompt{color:var(--verde2);white-space:nowrap;flex:none}
 #cmd{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--txt);font:inherit;caret-color:var(--verde);padding:0}
+.enviar{flex:none;background:var(--bg3);color:var(--verde);border:1px solid var(--linha);border-radius:5px;padding:1px 8px;font:12px var(--mono);opacity:.55}
+.enviar:hover,#cmd:not(:placeholder-shown)+.enviar{opacity:1;border-color:var(--verde2)}
 .teclas{display:none;gap:6px;padding:6px 8px;background:var(--bg2);border-top:1px solid var(--linha);overflow-x:auto;flex:none}
 .teclas button{flex:none;background:var(--bg3);color:var(--txt);border:1px solid var(--linha);border-radius:6px;padding:7px 11px;font:13px var(--mono)}
 
