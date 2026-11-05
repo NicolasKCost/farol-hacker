@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=27">
+<link rel="stylesheet" href="style.css?v=28">
 </head>
 <body>
 
@@ -45,9 +45,10 @@
 
   <!-- Notas (missão) -->
   <section class="janela" id="win-notas" hidden>
-    <header class="jt"><span class="jt-ico"></span><span class="jt-tit">missao.txt — Notas</span><span class="jt-bts"><button data-w="min" title="Minimizar">–</button><button data-w="max" title="Maximizar">□</button><button data-w="fechar" title="Fechar">×</button></span></header>
+    <header class="jt"><span class="jt-ico"></span><span class="jt-tit" id="tituloNotas">notas.txt — Notas</span><span class="jt-bts"><button data-w="min" title="Minimizar">–</button><button data-w="max" title="Maximizar">□</button><button data-w="fechar" title="Fechar">×</button></span></header>
     <div class="jc notas">
       <div class="notas-cab">Missão <span id="numMissao">1</span> · <span id="tituloMissao">O computador do sótão</span></div>
+      <div class="carta" id="cartaNotas" hidden></div>
       <ol class="passos" id="passos"></ol>
     </div>
   </section>
@@ -201,9 +202,9 @@
   </div>
 </div>
 
-<script src="missoes/missao1.js?v=27"></script>
-<script src="missoes/missao2.js?v=27"></script>
-<script src="ambiente.js?v=27"></script>
-<script src="jogo.js?v=27"></script>
+<script src="missoes/missao1.js?v=28"></script>
+<script src="missoes/missao2.js?v=28"></script>
+<script src="ambiente.js?v=28"></script>
+<script src="jogo.js?v=28"></script>
 </body>
 </html>

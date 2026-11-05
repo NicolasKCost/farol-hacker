@@ -68,9 +68,17 @@ function pararAtaque() { clearInterval(ataque); ataque = null; }
   host: 'sotao',
   home: '/home/marta',
 
+  notas: {
+    ficheiro: 'anexo_de_M.txt',
+    carta: '<p>Continuas aí. Ainda bem.</p>' +
+      '<p>O Rui fechou-te a porta do FAROL, mas o computador da Marta guardou uma coisa que ele não sabe. Explico-te tudo no e-mail: lê-o primeiro.</p>' +
+      '<p>Depois segue os passos, como da outra vez. Vou ensinar-te a procurar num ficheiro enorme e a pôr o Python a contar por ti.</p>' +
+      '<p class="assina">— M.</p>'
+  },
+
   intro: [
     'São 00:20. O Rui expulsou-te do <b>servidor FAROL</b>: a ligação caiu e perdeste o acesso. Mas tu continuas sentado ao <b>computador da Marta</b>, no sótão, e esse continua a funcionar e ligado à rede.',
-    'Acabou de chegar um e-mail de alguém que assina só <b>“M.”</b>. Diz que há uma cópia do registo do servidor neste computador — e que alguém entrou na conta da Marta.',
+    'Acabou de chegar um e-mail de alguém que assina só <b>“M.”</b>, a mesma assinatura do ficheiro que encontraste no computador. Traz notas novas em anexo, e diz que há uma cópia do registo do servidor neste computador. E que alguém entrou na conta da Marta.',
     'Nesta missão vais investigar um registo com mais de duas mil linhas. Vais aprender comandos para procurar em ficheiros e pôr o Python a ler por ti: <b>listas, for, if e contagens</b>. E no fim vais ter de te defender.'
   ],
 
@@ -111,7 +119,7 @@ function pararAtaque() { clearInterval(ataque); ataque = null; }
     { id: 'rui2', de: 'Rui Matos <rui.matos@vigia.pt>', assunto: 'Quem é?', data: '20/03/2009', quando: null, lido: true,
       corpo: 'O computador da Marta voltou a ligar-se à rede.\n\nNão sei quem és, mas sei o que estás a ler.\nDesliga isso. Agora.\n\nR.' },
     { id: 'm', de: 'M. <anonimo@remailer.invalid>', assunto: 'Lê isto antes que ele apague tudo', data: '00:19', quando: null,
-      corpo: 'Viste o FAROL. Agora sabes que eu não estava a inventar.\n\nO Rui vai apagar os registos do servidor esta noite. Mas este computador faz uma cópia todas as noites, à meia-noite: está na pasta farol, no ficheiro auth.log.\n\nAlguém entrou na conta da Marta no FAROL na madrugada de 20 de março, às 03:14. Não foi ela.\n\nDescobre de onde veio o ataque. O registo tem mais de duas mil linhas: não o leias à mão. Usa o terminal e o Python.\n\n— M.' },
+      corpo: 'Viste o FAROL. Agora sabes que eu não estava a inventar.\n\nSim, fui eu que deixei o ficheiro para_quem_encontrar.txt neste computador. Quem sou, conto-te noutra altura. Mandei-te notas novas em anexo: já estão abertas no ecrã.\n\nO Rui vai apagar os registos do servidor esta noite. Mas este computador faz uma cópia todas as noites, à meia-noite: está na pasta farol, no ficheiro auth.log.\n\nAlguém entrou na conta da Marta no FAROL na madrugada de 20 de março, às 03:14. Não foi ela.\n\nDescobre de onde veio o ataque. O registo tem mais de duas mil linhas: não o leias à mão. Usa o terminal e o Python.\n\n— M.' },
     { id: 'm2', de: 'M. <anonimo@remailer.invalid>', assunto: 'Bem feito', data: 'agora', quando: 'bloqueou',
       corpo: 'Fechaste-lhe a porta. Bem feito.\n\nQueres saber de quem é o 10.0.0.66? Experimenta no terminal:\n  grep "for rui" auth.log\n\nEle conseguiu a palavra-passe da Marta à tentativa 613. Amanhã à noite explico-te como — e como é que tu te proteges.\n\n— M.' }
   ],

@@ -11,9 +11,19 @@
   host: 'sotao',
   home: '/home/marta',
 
+  notas: {
+    ficheiro: 'para_quem_encontrar.txt',
+    carta: '<p>Se estás a ler isto, alguém voltou a ligar o computador da Marta. Ela já não está cá para o fazer.</p>' +
+      '<p>Não sei quem és, nem quanto sabes de computadores. Por isso vou ensinar-te tudo desde o início: como mexer no terminal, como ler os ficheiros dela e como pôr o Python a trabalhar por ti.</p>' +
+      '<p>A Marta descobriu uma coisa sobre o servidor <b>FAROL</b> e sobre a empresa onde trabalhava, a <b>Vigia</b>. Preciso que alguém acabe o que ela começou.</p>' +
+      '<p>Deixei-te os passos aqui em baixo. Faz um de cada vez: quando acabares um, o seguinte abre-se.</p>' +
+      '<p class="assina">— M.</p>'
+  },
+
   intro: [
     'Na Feira da Ladra, por 5 euros, compraste uma torre de computador cheia de pó. O vendedor disse que vinha do sótão de um prédio em Alfama.',
     'Em casa, ligas o computador. O ventilador ronca, o ecrã acende... e abre-se uma sessão de alguém chamado <b>marta</b>. O relógio está parado em março de 2009.',
+    'No meio do ecrã, um ficheiro de texto abre-se sozinho. Chama-se <b>para_quem_encontrar.txt</b>.',
     'Não precisas de saber nada de informática. Vais aprender a mexer num terminal Linux e a escrever o teu primeiro código em Python, passo a passo.'
   ],
 

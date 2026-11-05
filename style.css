@@ -385,3 +385,8 @@ code.cmd:hover{background:#1f5233!important}
 .recuo i{font-style:normal;font-size:11px;color:#9fc4a9}
 .recuo div.rep i{color:#3ddc84}
 .esp{color:#ffb347;font-weight:700;letter-spacing:1px}
+
+/* carta de M. no topo das notas: explica quem escreveu as notas e porquê */
+.carta{margin:4px 0 14px;padding:10px 12px;background:#fffdf3;border:1px dashed #c9b98f;border-left:4px solid #b8923a;border-radius:4px;font-style:italic;color:#4a3f28;font-size:13.5px;line-height:1.5}
+.carta p{margin:0 0 6px}
+.carta .assina{text-align:right;font-weight:700;font-style:normal;margin:0}

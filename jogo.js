@@ -895,6 +895,9 @@ $('#btnRecomecar').onclick = () => {
 carregar();
 $('#introTexto').innerHTML = M.intro.map(p => `<p>${p}</p>`).join('');
 $('#tituloMissao').textContent = M.titulo; $('#numMissao').textContent = M.numero;
+// de onde vêm estas notas (quem as escreveu e porquê)
+$('#tituloNotas').textContent = ((M.notas && M.notas.ficheiro) || 'notas.txt') + ' — Notas';
+if (M.notas && M.notas.carta) { $('#cartaNotas').innerHTML = M.notas.carta; $('#cartaNotas').hidden = false; }
 document.title = `FAROL · Missão ${M.numero}`;
 $('#introSelo').textContent = `MISSÃO ${M.numero}`;
 $('#introTitulo').textContent = M.titulo;
