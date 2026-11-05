@@ -299,8 +299,8 @@
       facto: 'ssh',
       abre: 'terminal',
       titulo: 'Entra no FAROL',
-      historia: 'Tens o endereço, o utilizador e a palavra-passe. Hora de ver o que a Vigia anda a esconder.',
-      aprende: '<code>ssh</code> (de <i>secure shell</i>) liga-te a outro computador pela rede, para lhe dares comandos à distância. O formato é <code>ssh utilizador@endereço</code>.',
+      historia: 'Tens o endereço, o utilizador e a palavra-passe. Atenção: o FAROL <b>não</b> é este computador. É um <b>servidor</b> que está noutro sítio, no endereço 10.0.0.7. O computador da Marta é só a tua porta de entrada. Hora de ver o que a Vigia anda a esconder.',
+      aprende: '<code>ssh</code> (de <i>secure shell</i>) liga-te a outro computador pela rede, para lhe dares comandos à distância. O formato é <code>ssh utilizador@endereço</code>.<div class="rede"><div class="rede-pc"><b>💻 Computador da Marta</b><span>no sótão · estás aqui</span></div><div class="rede-seta"><code>ssh</code><span>▼ pela rede</span></div><div class="rede-pc srv"><b>🗄️ Servidor FAROL</b><span>noutro sítio · 10.0.0.7</span></div></div>',
       tarefa: '<ol><li><b>Volta ao Terminal:</b> clica em <b>Terminal</b> na barra de tarefas, lá em baixo (ou no ícone do ambiente de trabalho).</li><li>Escreve <code class="cmd">ssh marta@10.0.0.7</code> e carrega em <kbd>Enter</kbd>.</li><li>Quando pedir a palavra-passe, escreve a que descobriste e carrega em <kbd>Enter</kbd>. As letras não aparecem enquanto escreves — é normal, é para ninguém as ver.</li></ol>',
       pista: 'A palavra-passe é o que o Python mostrou: <code>farol_obscuro</code>. Ao escrevê-la, não aparecem letras no ecrã — é normal, é para ninguém a ver por cima do teu ombro.'
     }

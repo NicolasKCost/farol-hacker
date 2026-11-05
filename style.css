@@ -366,3 +366,11 @@ code.cmd:hover{background:#1f5233!important}
 /* anatomia de uma linha do registo */
 .anat{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;background:#0d130f;color:#d6e7da;border-radius:8px;padding:8px 10px;margin:8px 0;font-size:12.5px}
 .anat code{background:none!important;color:#ffe46b;white-space:nowrap}
+
+/* desenho: computador da Marta -> servidor FAROL */
+.rede{display:flex;flex-direction:column;align-items:flex-start;gap:3px;margin:8px 0;font-size:12px}
+.rede-pc{display:flex;flex-direction:column;background:#fff;border:1px solid #c9b98f;border-radius:6px;padding:4px 8px;line-height:1.3}
+.rede-pc span{font-size:11px;color:#6b5d3d}
+.rede-pc.srv{background:#16241b;border-color:#2e7d4f;color:#d6e7da}
+.rede-pc.srv span{color:#9fc4a9}
+.rede-seta{display:flex;gap:6px;align-items:center;padding-left:14px;font:11px var(--mono);color:#6b5d3d}

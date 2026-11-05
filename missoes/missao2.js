@@ -67,7 +67,7 @@ function pararAtaque() { clearInterval(ataque); ataque = null; }
   home: '/home/marta',
 
   intro: [
-    'São 00:20. O Rui expulsou-te do FAROL, mas o computador da Marta continua ligado à rede.',
+    'São 00:20. O Rui expulsou-te do <b>servidor FAROL</b>: a ligação caiu e perdeste o acesso. Mas tu continuas sentado ao <b>computador da Marta</b>, no sótão, e esse continua a funcionar e ligado à rede.',
     'Acabou de chegar um e-mail de alguém que assina só <b>“M.”</b>. Diz que há uma cópia do registo do servidor neste computador — e que alguém entrou na conta da Marta.',
     'Nesta missão vais investigar um registo com mais de duas mil linhas. Vais aprender comandos para procurar em ficheiros e pôr o Python a ler por ti: <b>listas, for, if e contagens</b>. E no fim vais ter de te defender.'
   ],
@@ -119,7 +119,7 @@ function pararAtaque() { clearInterval(ataque); ataque = null; }
       facto: 'mail:m',
       abre: 'correio',
       titulo: 'Um e-mail de “M.”',
-      historia: 'O Rui expulsou-te do FAROL. Mas o computador da Marta continua ligado à rede… e acabou de chegar um e-mail de alguém que assina só <b>“M.”</b>.',
+      historia: 'O Rui expulsou-te do servidor FAROL, mas tu continuas no computador da Marta, no sótão. Perdeste o acesso ao servidor, não ao computador. E acabou de chegar um e-mail de alguém que assina só <b>“M.”</b>.' + '<div class="rede"><div class="rede-pc"><b>💻 Computador da Marta</b><span>no sótão · continuas aqui</span></div><div class="rede-seta"><code>ssh</code><span>✖ ligação cortada</span></div><div class="rede-pc srv"><b>🗄️ Servidor FAROL</b><span>noutro sítio · 10.0.0.7</span></div></div>',
       aprende: 'Quem investiga ataques informáticos chama-se <b>analista forense</b>. O primeiro passo é sempre o mesmo: perceber o que aconteceu e onde estão as provas.',
       tarefa: '<ol><li>Clica no ícone <b>Correio</b> (o envelope, a piscar) no ambiente de trabalho. No telemóvel, toca em <b>Correio</b> na barra de baixo.</li><li>Clica na mensagem de <b>M.</b> (a que tem uma bolinha azul) e lê-a.</li></ol>',
       pista: 'O Correio é o ícone do envelope branco, à esquerda. A mensagem nova está no topo da lista.'
