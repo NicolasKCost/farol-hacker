@@ -232,12 +232,16 @@ window.MISSAO = {
 
   fim: {
     aprendeste: [
-      'Usar um terminal Linux: <code>ls</code>, <code>ls -a</code>, <code>cd</code>, <code>cat</code>, <code>pwd</code>',
-      'Que ficheiros com ponto ficam ocultos (e que isso não é proteção)',
-      'Que base64 é só uma codificação, não uma cifra',
-      'Python: <code>import</code>, variáveis, abrir ficheiros, <code>print</code> e <code>[::-1]</code>',
-      'Para que serve o <code>ssh</code>'
+      'No terminal: <code>ls</code> lista o que há numa pasta, <code>ls -a</code> mostra também os ocultos, <code>cd</code> entra numa pasta e <code>cat</code> lê um ficheiro.',
+      'Um ficheiro oculto (com ponto no início do nome) não está protegido: só não aparece à primeira.',
+      'Base64 é um disfarce, não um segredo: qualquer pessoa o desfaz, sem palavra-passe.',
+      'Correste o teu primeiro programa em Python e mudaste-lhe uma linha.',
+      'Uma <b>variável</b> é uma caixa com nome: <code>senha = "orucsbo_loraf"</code>. E <code>print()</code> mostra o que está lá dentro.',
+      '<code>import</code> vai buscar uma caixa de ferramentas, e usa-se assim: <code>base64.b64decode</code>.',
+      '<code>[::-1]</code> vira um texto ao contrário.',
+      '<code>ssh</code> serve para entrar noutro computador pela rede.'
     ],
+    proximo: 'Até agora usaste e mudaste programas que já estavam escritos. Na missão 2 vais escrever um tu, do zero.',
     teaser: '<b>Missão 2 · O Vigia</b><br>O Rui sabe que entraste. Tens um registo com milhares de ligações ao FAROL e alguém está a apagar provas. Vais escrever um script Python que encontra, no meio do ruído, o IP do invasor — antes que ele te encontre a ti.'
   }
 };

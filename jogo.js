@@ -690,7 +690,7 @@ function mostrarFim() {
   const ms = (E.fim || Date.now()) - (E.inicio || Date.now());
   const min = Math.max(1, Math.round(ms / 60000));
   $('#fimTempo').textContent = `Tempo: ${min} minuto${min > 1 ? 's' : ''}.`;
-  $('#fimLista').innerHTML = M.fim.aprendeste.map(x => `<li>${x}</li>`).join('');
+  $('#fimLista').innerHTML = '<ul class="lista">' + M.fim.aprendeste.map(x => `<li>${x}</li>`).join('') + '</ul>' + (M.fim.proximo ? `<p class="proximo">${M.fim.proximo}</p>` : '');
   $('#fimTeaser').innerHTML = M.fim.teaser;
   $('#ecraFim').hidden = false;
 }

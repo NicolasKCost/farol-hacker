@@ -292,3 +292,4 @@ code.cmd:hover{background:#1f5233!important}
 .ex-linha .cod{background:none!important;padding:0;font-size:13px;white-space:pre-wrap;word-break:break-all;color:#e6f4ea}
 .ex-linha b{color:#fff}
 .explica .c-falta{padding:0 2px}
+.proximo{background:var(--bg3);border-left:3px solid var(--verde2);border-radius:6px;padding:8px 12px;margin:12px 0 0;font-size:14px}
