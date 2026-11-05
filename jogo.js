@@ -837,7 +837,8 @@ function mostrarFim() {
   $('#ecraFim').hidden = false;
 }
 $('#btnFechar').onclick = () => { $('#ecraFim').hidden = true; };
-$('#btnProxima').onclick = () => { location.href = location.pathname + '?m=' + SEGUINTE.numero; };
+// a missão seguinte começa logo, com o computador já ligado (sem voltar ao ecrã inicial)
+$('#btnProxima').onclick = () => { location.href = location.pathname + '?m=' + SEGUINTE.numero + '&seguir=1'; };
 $('#btnPartilhar').onclick = async () => {
   const dados = { title: 'FAROL · jogo de hacker em português', text: 'Aprende terminal e Python a investigar um computador velho. Grátis, no navegador:', url: location.href.split(/[?#]/)[0] };
   try {
@@ -901,7 +902,7 @@ async function abrirPorPrograma() {
   abrirJanelasIniciais();
 }
 
-async function arrancar(novo) {
+async function arrancar(novo, jaLigado = false) {
   $('#ecraIntro').hidden = true;
   if (novo || !E.comecou) {
     E = estadoNovo(); E.comecou = true; E.inicio = Date.now();
@@ -910,7 +911,7 @@ async function arrancar(novo) {
     porCodigo(CODIGO_INICIAL);
     desenharPassos(); atualizarPrompt(); fmOcultos.checked = false; fmIr(M.home); desenharCorreio();
     ocupado = true;
-    await ecraArranque();
+    if (!jaLigado) await ecraArranque();
     WM.relogio(E.inicio, M.relogio);
     for (const [t, c] of M.boot) linha(t, c);
     await abrirPorPrograma();
@@ -968,5 +969,10 @@ if (E.comecou) {
   if (M.passos.slice(0, indiceAtual() + 1).some(p => p.codigo)) prepararPython();
 }
 $('#btnComecar').onclick = () => arrancar(false);
+// vindo do fim da missão anterior: o PC já está ligado, entra direto
+if (new URLSearchParams(location.search).get('seguir')) {
+  history.replaceState(null, '', location.pathname + '?m=' + M.numero);
+  arrancar(false, true);
+}
 $('#btnDoZero').onclick = () => arrancar(true);
 })();
