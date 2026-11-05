@@ -321,3 +321,4 @@ code.cmd:hover{background:#1f5233!important}
 .resultado .btn{display:block;margin-top:10px;font-size:14px;padding:8px 14px}
 .py-ok{margin-top:10px;padding:8px 10px;border-radius:6px;background:#163b25;color:#d9ffe6;font-family:var(--sans);white-space:normal;font-size:13px}
 .py-ok button{margin-left:6px;background:var(--verde);color:#04140a;border:0;border-radius:6px;padding:4px 10px;font-weight:700}
+.ex-linha span code,.explica code:not(.cod){background:#24332a!important;color:#ffe46b;padding:1px 5px;border-radius:3px}
