@@ -141,40 +141,105 @@ window.MISSAO = {
       pista: 'Vais encontrar a pasta <b>.segredo</b> (com o ponto). Entra com <code>cd .segredo</code>, faz <code>ls</code> e depois <code>cat mensagem.b64</code>.'
     },
     {
-      facto: 'pyCorreu',
-      titulo: 'Corre o teu primeiro programa',
-      historia: 'A mensagem é um monte de letras sem sentido: está <b>disfarçada</b> com uma coisa chamada <b>base64</b>. A Marta apagou o comando que a lia… mas este computador tem <b>Python</b>, uma linguagem para dar ordens ao computador.',
-      aprende: 'Um <b>programa</b> é uma lista de ordens. O computador lê-as <b>de cima para baixo</b>, uma linha de cada vez.<br>No editor, cada parte do código tem uma <b>cor</b> diferente, para ser mais fácil de ler. A legenda das cores está por baixo do código.',
-      explicaTitulo: 'Como funciona este programa',
+      facto: 'variavel',
+      licao: true,
+      titulo: 'Lição: caixas com nome (variáveis)',
+      historia: 'A mensagem está disfarçada com <b>base64</b>, e a Marta apagou o comando que a lia. Vais ter de usar <b>Python</b>, uma linguagem para dar ordens ao computador. Primeiro, a ideia mais importante da programação: as <b>variáveis</b>.',
+      aprende: 'Uma <b>variável</b> é uma <b>caixa com uma etiqueta</b>. Guardas lá uma coisa e, mais tarde, chamas a caixa pelo nome para a ir buscar.' +
+        '<div class="caixas"><div class="caixa"><span class="etq">nome</span><span class="val">"Marta"</span></div><div class="caixa"><span class="etq">ano</span><span class="val">2009</span></div></div>' +
+        'Em Python, uma caixa cria-se com o sinal <b>=</b>: à esquerda fica a etiqueta, à direita o que vai lá para dentro.<br><code>nome = "Marta"</code> lê-se: “guarda <i>Marta</i> na caixa <i>nome</i>”.<br>O texto vai sempre <b>entre aspas</b>; os números não.',
+      explicaTitulo: 'O programa, linha a linha',
       explica: [
-        ['# isto é uma nota', 'Linhas que começam por <b>#</b> são <b>notas</b> para pessoas. O computador salta-as.'],
-        ['with open("/home/marta/.segredo/mensagem.b64") as ficheiro:', '<b>open</b> é uma <b>função</b> (uma ação): abre o ficheiro cujo caminho está entre aspas. Enquanto está aberto, chamamos-lhe <b>ficheiro</b>.'],
-        ['    codificado = ficheiro.read()', '<b>read</b> lê tudo o que está no ficheiro. O sinal <b>=</b> guarda o resultado numa <b>variável</b> — uma caixa com nome — chamada <b>codificado</b>. Os 4 espaços no início dizem que esta linha pertence ao <b>with</b> de cima.'],
-        ['print(codificado)', '<b>print</b> mostra no ecrã o que está dentro da caixa <b>codificado</b>.']
+        ['nome = "Marta"', 'Cria a caixa <b>nome</b> e guarda lá o texto <b>Marta</b>.'],
+        ['ano = 2009', 'Cria a caixa <b>ano</b> e guarda lá o número <b>2009</b> (sem aspas, porque é um número).'],
+        ['print(nome)', '<b>print</b> é uma <b>função</b> (uma ação): mostra no ecrã o que está <b>dentro</b> da caixa <b>nome</b>. Repara: sem aspas! <code>print("nome")</code> mostraria só a palavra “nome”.']
       ],
-      tarefa: '<ol><li><b>Abre o Python:</b> no ambiente de trabalho, clica no ícone <b>Python</b> (a cobra azul e amarela, a piscar). No telemóvel, toca em <b>Python</b> na barra de baixo.</li><li>Abre-se o editor, já com um programa escrito. Não precisas de escrever nada.</li><li>Na janela <b>Python</b>, carrega no botão verde <b>▶ Executar</b> (no topo da janela).</li><li>Olha para a parte de baixo da janela: vais ver a mensagem disfarçada, igual à que viste no terminal.</li></ol>',
-      pista: 'Só tens de carregar no botão verde <b>▶ Executar</b>. Da primeira vez pode demorar uns segundos, porque o Python está a ligar-se.',
+      tarefa: '<ol><li><b>Abre o Python:</b> no ambiente de trabalho, clica no ícone <b>Python</b> (a cobra azul e amarela, a piscar). No telemóvel, toca em <b>Python</b> na barra de baixo.</li><li>Carrega no botão verde <b>▶ Executar</b>. Em baixo aparece o resultado e a lista <b>📦 Caixas na memória</b>.</li><li>Na linha <code>nome = "Marta"</code>, apaga só as letras de <b>Marta</b> (deixa as aspas) e escreve o <b>teu nome</b>.</li><li>Carrega outra vez em <b>▶ Executar</b>.</li></ol>',
+      antesDepois: ['nome = "<mark>Marta</mark>"', 'nome = "<mark>Rita</mark>"   (o teu nome)'],
+      pista: 'Clica logo a seguir ao <b>a</b> final de Marta, carrega 5 vezes em <kbd>⌫</kbd> e escreve o teu nome. As aspas <b>"</b> têm de ficar dos dois lados: <code>nome = "Rita"</code>.',
       codigo:
-'# Linhas que começam por # são notas: o computador ignora-as.\n\n' +
-'# 1. Abrir o ficheiro da mensagem e guardar o que lá está\n' +
-'#    numa "caixa" (variável) chamada codificado\n' +
+'# Criar duas caixas (variáveis) e guardar coisas lá dentro\n' +
+'nome = "Marta"\n' +
+'ano = 2009\n\n' +
+'# Mostrar no ecrã o que está dentro de cada caixa\n' +
+'print(nome)\n' +
+'print(ano)\n',
+      solucao:
+'# Criar duas caixas (variáveis) e guardar coisas lá dentro\n' +
+'nome = "Jogador"\n' +
+'ano = 2009\n\n' +
+'# Mostrar no ecrã o que está dentro de cada caixa\n' +
+'print(nome)\n' +
+'print(ano)\n'
+    },
+    {
+      facto: 'pyCorreu',
+      titulo: 'Guarda a mensagem numa caixa',
+      historia: 'Agora que sabes o que é uma caixa, vais guardar numa delas a mensagem disfarçada da Marta.',
+      aprende: 'Este programa usa a função <b>open</b> para abrir o ficheiro da mensagem e guarda o que lá está numa caixa chamada <b>codificado</b>.<br>As linhas que começam por <code>#</code> são <b>notas</b> para pessoas: o computador salta-as.',
+      explicaTitulo: 'O programa, linha a linha',
+      explica: [
+        ['with open("/home/marta/.segredo/mensagem.b64") as ficheiro:', '<b>open</b> abre o ficheiro cujo caminho está entre aspas. Enquanto está aberto, chamamos-lhe <b>ficheiro</b>. Os <b>dois pontos</b> no fim dizem: “o que vem a seguir acontece com o ficheiro aberto”.'],
+        ['    codificado = ficheiro.read()', 'Os <b>4 espaços</b> no início mostram que esta linha pertence ao <b>with</b>. <b>read</b> lê tudo o que está no ficheiro, e o <b>=</b> guarda isso na caixa <b>codificado</b>.'],
+        ['print(codificado)', 'Mostra no ecrã o que está na caixa <b>codificado</b>.']
+      ],
+      tarefa: '<ol><li>O programa novo já está escrito na janela <b>Python</b>: não precisas de mudar nada.</li><li>Carrega em <b>▶ Executar</b>.</li><li>Em baixo vês a mensagem disfarçada, e nas <b>📦 Caixas na memória</b> aparece a caixa <b>codificado</b>.</li></ol>',
+      pista: 'Só tens de carregar no botão verde <b>▶ Executar</b>, no topo da janela Python.',
+      codigo:
+'# Abrir o ficheiro da mensagem e guardar o que lá está\n' +
+'# numa caixa (variável) chamada codificado\n' +
 'with open("/home/marta/.segredo/mensagem.b64") as ficheiro:\n' +
 '    codificado = ficheiro.read()\n\n' +
-'# 2. Mostrar no ecrã o que está dentro da caixa\n' +
+'# Mostrar no ecrã o que está dentro da caixa\n' +
 'print(codificado)\n'
+    },
+    {
+      facto: 'importou',
+      licao: true,
+      titulo: 'Lição: caixas de ferramentas (import)',
+      historia: 'Para tirar o disfarce vais precisar de uma ferramenta. O Python já traz centenas delas, arrumadas em <b>caixas de ferramentas</b>. Primeiro, experimenta usar uma.',
+      aprende: 'O Python vem com muitas <b>caixas de ferramentas</b> (chamam-se <b>módulos</b>) guardadas num armário. Para usar uma, primeiro tens de a ir buscar com <b>import</b>.' +
+        '<div class="caixas"><div class="caixa ferr"><span class="etq">🧰 random</span><span class="val">randint · choice · shuffle …</span></div><div class="caixa ferr"><span class="etq">🧰 base64</span><span class="val">b64encode · b64decode …</span></div></div>' +
+        '<code>import random</code> = “vai ao armário buscar a caixa <i>random</i>” (ferramentas de sorte e acaso).<br>Depois usas uma ferramenta lá de dentro escrevendo <b>caixa.ferramenta</b>, com um <b>ponto</b> no meio: <code>random.randint(1, 6)</code> = “da caixa random, usa a ferramenta randint”. Esta escolhe um número ao calhas entre 1 e 6, como um dado.<br>Sem o <code>import</code>, o Python diz que não conhece <code>random</code>.',
+      explicaTitulo: 'O programa, peça a peça',
+      explica: [
+        ['import random', 'Vai buscar a caixa de ferramentas <b>random</b>.'],
+        ['dado =', 'Cria uma caixa chamada <b>dado</b> para guardar o número que sair.'],
+        ['random.', 'Abre a caixa de ferramentas <b>random</b>…'],
+        ['randint(1, 6)', '…e usa a ferramenta <b>randint</b>. O que está dentro dos parênteses é o que entregas à ferramenta: o número mínimo (<b>1</b>) e o máximo (<b>6</b>).'],
+        ['print("Saiu o número", dado)', 'Mostra um texto e, a seguir, o que está na caixa <b>dado</b>. As duas coisas separam-se com uma vírgula.']
+      ],
+      tarefa: '<ol><li>Carrega em <b>▶ Executar</b> duas ou três vezes: sai um número diferente de cada vez.</li><li>Agora faz um dado de 100 faces: na linha do <b>randint</b>, troca o <b>6</b> por <b>100</b>.</li><li>Carrega em <b>▶ Executar</b>.</li></ol>',
+      antesDepois: ['dado = random.randint(1, <mark>6</mark>)', 'dado = random.randint(1, <mark>100</mark>)'],
+      pista: 'Clica logo a seguir ao <b>6</b>, apaga-o com <kbd>⌫</kbd> e escreve <b>100</b>. A linha fica: <code>dado = random.randint(1, 100)</code>',
+      codigo:
+'# Ir buscar ao armário a caixa de ferramentas "random" (sorte e acaso)\n' +
+'import random\n\n' +
+'# Da caixa random, usar a ferramenta randint:\n' +
+'# escolhe um número ao calhas entre 1 e 6, como um dado\n' +
+'dado = random.randint(1, 6)\n\n' +
+'print("Saiu o número", dado)\n',
+      solucao:
+'# Ir buscar ao armário a caixa de ferramentas "random" (sorte e acaso)\n' +
+'import random\n\n' +
+'# Um dado de 100 faces\n' +
+'dado = random.randint(1, 100)\n\n' +
+'print("Saiu o número", dado)\n'
     },
     {
       facto: 'decoded',
       titulo: 'Tira o disfarce',
-      historia: 'O programa leu a mensagem, mas ela continua disfarçada. Agora vais mudar <b>uma única palavra</b> no programa para o Python tirar o disfarce.',
-      aprende: '<b>Base64</b> não é um segredo a sério, é só um disfarce: qualquer pessoa o tira, sem palavra-passe.<br><br>O Python tem <b>caixas de ferramentas</b>, chamadas <b>módulos</b>. A primeira linha, <code>import base64</code>, vai buscar a caixa <b>base64</b>. Lá dentro há uma ferramenta chamada <b>b64decode</b>, que tira o disfarce (<i>decode</i> = descodificar).<br><br>Para usar uma ferramenta de uma caixa, escreve-se <b>caixa.ferramenta</b>, com um ponto no meio: <code>base64.b64decode</code>.',
+      historia: 'Já tens tudo o que precisas: sabes guardar coisas em caixas e usar ferramentas. Agora vais mudar <b>uma única palavra</b> para o Python tirar o disfarce à mensagem.',
+      aprende: '<b>Base64</b> não é um segredo a sério, é só um disfarce: qualquer pessoa o tira, sem palavra-passe.<br>A caixa de ferramentas é a <b>base64</b> (vem com <code>import base64</code>) e a ferramenta que tira o disfarce chama-se <b>b64decode</b> (<i>decode</i> = descodificar).<br><br>A linha nova parece comprida, mas o Python lê-a por partes, <b>da esquerda para a direita</b>: primeiro usa a ferramenta, depois traduz o resultado, e no fim guarda tudo na caixa <b>texto</b>.',
       explicaTitulo: 'A linha que vais completar, peça a peça',
       explica: [
-        ['texto =', 'Cria uma caixa nova chamada <b>texto</b>, para guardar o resultado.'],
-        ['base64.', 'Vai à caixa de ferramentas <b>base64</b>. Já está escrito: não mexas.'],
-        ['???', '<b>Aqui falta o nome da ferramenta.</b> É isto que vais trocar por <b>b64decode</b>.'],
-        ['(codificado)', 'Entrega à ferramenta a mensagem disfarçada que está na caixa <b>codificado</b>.'],
-        ['.decode("utf-8")', 'Transforma o resultado em letras normais, com acentos.']
+        ['import base64', 'Vai buscar a caixa de ferramentas <b>base64</b> — tal como fizeste com a <b>random</b>.'],
+        ['texto =', 'Cria uma caixa chamada <b>texto</b>, para guardar a mensagem já sem disfarce.'],
+        ['base64.', 'Abre a caixa de ferramentas <b>base64</b>. Já está escrito: não mexas.'],
+        ['???', '<b>Falta o nome da ferramenta.</b> É aqui que escreves <b>b64decode</b>.'],
+        ['(codificado)', 'Entrega à ferramenta a mensagem disfarçada, que está na caixa <b>codificado</b> (guardaste-a lá dois passos atrás).'],
+        ['.decode("utf-8")', 'O b64decode devolve <b>bytes</b>: os números que o computador usa por dentro para guardar letras. O <b>.decode("utf-8")</b> traduz esses números de volta para letras que se leem. <i>utf-8</i> é o “alfabeto” que inclui os acentos (á, ç, ã).'],
+        ['print(texto)', 'Mostra a mensagem, finalmente sem disfarce.']
       ],
       tarefa: '<ol><li>Na janela <b>Python</b>, procura a linha com <span class="falta">???</span> (está a piscar a amarelo).</li><li>Clica logo a seguir ao último <b>?</b> — entre o <b>?</b> e o <b>(</b>.</li><li>Carrega <b>3 vezes</b> na tecla <kbd>⌫</kbd> (Backspace, a tecla de apagar) para apagar os três <b>?</b>.</li><li>Escreve <b>b64decode</b> — só isso. O <b>base64.</b> antes já lá está, não o escrevas outra vez.</li><li>Carrega em <b>▶ Executar</b>.</li></ol>',
       antesDepois: ['texto = base64.<mark>???</mark>(codificado).decode("utf-8")', 'texto = base64.<mark>b64decode</mark>(codificado).decode("utf-8")'],

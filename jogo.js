@@ -361,7 +361,7 @@ const DICAS = [
 
 async function correr() {
   const src = codigo.value;
-  if (cmd.value.trim() && (src === CODIGO_INICIAL || !M.passos[indiceAtual()] || !['pyCorreu','decoded','senha'].includes(M.passos[indiceAtual()].facto))) {
+  if (cmd.value.trim() && (src === CODIGO_INICIAL || !M.passos[indiceAtual()] || !M.passos[indiceAtual()].codigo)) {
     pySaida.innerHTML = '';
     const s = document.createElement('span'); s.className = 'dica';
     s.innerHTML = `💡 Tens <code>${esc(cmd.value.trim())}</code> escrito no <b>terminal</b> (em cima), mas ainda não foi enviado. Clica no terminal e carrega em <kbd>Enter</kbd> — este botão ▶ Executar é só para código Python.`;
@@ -380,6 +380,7 @@ async function correr() {
       p.runPython(`import os\nos.chdir(${JSON.stringify(E.cwd)})`);
       await p.runPythonAsync(src, { globals: ns });
       if (!pyBuffer.trim()) pyEscrever('(o programa correu mas não mostrou nada — usa print() para ver resultados)\n', 'dim');
+      mostrarCaixas(p, ns);
     } catch (err) {
       const msg = String(err.message || err);
       const linhas = msg.trim().split('\n');
@@ -398,12 +399,40 @@ async function correr() {
         pySaida.appendChild(b);
       }
     } finally { ns.destroy(); }
-    verificarPython(pyBuffer);
+    verificarPython(pyBuffer, src);
   } catch (e) { /* falha de carregamento já mostrada */ }
   btnRun.disabled = false;
 }
 
-function verificarPython(out) {
+// 📦 mostra as variáveis (caixas) e módulos (caixas de ferramentas) que ficaram na memória
+function mostrarCaixas(p, ns) {
+  let lista = [];
+  try {
+    const r = p.runPython(`[(k, type(v).__name__, repr(v)) for k, v in list(globals().items()) if not k.startswith('__')]`, { globals: ns });
+    lista = r.toJs(); r.destroy();
+  } catch (e) { return; }
+  const itens = [];
+  for (const [k, tipo, rep] of lista) {
+    if (tipo === 'module') itens.push(`<span class="cm-ferr">🧰 <b>${esc(k)}</b> <i>caixa de ferramentas</i></span>`);
+    else if (tipo === 'function' || tipo === 'builtin_function_or_method' || tipo === 'type') continue;
+    else if (/IOWrapper/.test(tipo)) itens.push(`<span class="cm-cx">📄 <b>${esc(k)}</b> <i>ficheiro (já fechado)</i></span>`);
+    else {
+      const v = rep.length > 46 ? rep.slice(0, 44) + '…' + rep.slice(-1) : rep;
+      const t = { str: 'texto', int: 'número', float: 'número', bytes: 'bytes', bool: 'sim/não', list: 'lista' }[tipo] || tipo;
+      itens.push(`<span class="cm-cx">📦 <b>${esc(k)}</b> = <code>${esc(v)}</code> <i>${t}</i></span>`);
+    }
+  }
+  if (!itens.length) return;
+  const d = document.createElement('div'); d.className = 'caixas-mem';
+  d.innerHTML = '<div class="cm-tit">📦 Caixas na memória (variáveis)</div>' + itens.join('');
+  pySaida.appendChild(d);
+}
+
+function verificarPython(out, src = '') {
+  const nm = src.match(/^\s*nome\s*=\s*["']([^"'\n]+)["']/m);
+  if (nm && nm[1].trim() && nm[1].trim() !== 'Marta' && out.includes(nm[1].trim())) facto('variavel');
+  const dado = src.match(/random\.randint\(\s*1\s*,\s*(\d+)\s*\)/);
+  if (dado && dado[1] !== '6' && /import\s+random/.test(src) && /\d/.test(out)) facto('importou');
   if (/U2UgZXN0w6Fz/.test(out)) facto('pyCorreu');
   if (/10\.0\.0\.7/.test(out) && /orucsbo_loraf/.test(out)) { facto('pyCorreu'); facto('decoded'); }
   if (/farol_obscuro/.test(out)) facto('senha');
@@ -514,6 +543,7 @@ function desenharPassos() {
         <div class="acoes">
           <button data-acao="pista">💡 Pista</button>
           ${p.solucao ? '<button data-acao="solucao">✍ Escrever por mim</button>' : ''}
+          ${p.licao ? '<button data-acao="saltar" title="Para quem já programa">⏭ Já sei isto — saltar</button>' : ''}
           ${p.codigo ? '<button data-acao="codigo">↺ Começar o código de novo</button>' : ''}
           ${p.codigo ? '<button data-acao="ir-python">🐍 Abrir Python</button>' : '<button data-acao="ir-terminal">&gt;_ Ir ao terminal</button>'}
         </div>
@@ -546,6 +576,7 @@ olPassos.addEventListener('click', e => {
     const a = b.dataset.acao;
     if (a === 'pista') li.querySelector('.pista').classList.toggle('ver');
     else if (a === 'codigo') { porCodigo(M.passos[li.dataset.i].codigo); mostrarAba('python'); }
+    else if (a === 'saltar') { facto(M.passos[li.dataset.i].facto); }
     else if (a === 'solucao') { porCodigo(M.passos[li.dataset.i].solucao); mostrarAba('python'); avisar('Pronto, o código está escrito. Agora carrega em <b>▶ Executar</b>.'); }
     else if (a === 'ir-python') { mostrarAba('python'); prepararPython(); }
     else if (a === 'ir-terminal') { mostrarAba('terminal'); cmd.focus({ preventScroll: true }); }
