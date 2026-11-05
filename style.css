@@ -417,27 +417,11 @@ code.cmd:hover{background:#1f5233!important}
 .ent-sub{max-width:640px;margin:8px auto 0;color:#b8c6d6;font-size:15.5px;line-height:1.5}
 .ent-grelha{display:grid;grid-template-columns:1.1fr 1fr;gap:22px;align-items:start}
 .rab{background:#0f1a2b;border:1px solid #23344d;border-radius:14px;padding:14px 14px 12px;position:sticky;top:0}
-.rab-svg{width:100%;height:auto;display:block;border-radius:8px;background:repeating-linear-gradient(0deg,transparent 0 23px,#ffffff08 23px 24px)}
-.rab-svg .cena{display:none;filter:url(#lapis)}
-.rab-svg .cena.ativa{display:inline}
-.rab-svg path,.rab-svg circle{fill:none;stroke:#f1e6cc;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1}
-.rab-svg path.am,.rab-svg circle.am{stroke:#ffd166}
-.rab-svg path.verm,.rab-svg circle.verm{stroke:#ff7b6b}
-.rab-svg .ativa path,.rab-svg .ativa circle{animation:rab-desenha 1.1s ease-out forwards;animation-delay:var(--d,0s)}
-@keyframes rab-desenha{to{stroke-dashoffset:0}}
-.rab-svg text{font:700 22px 'Caveat',cursive;fill:#f1e6cc;opacity:0}
-.rab-svg text.am{fill:#ffd166}.rab-svg text.verm{fill:#ff7b6b}
-.rab-svg .ativa text{animation:rab-aparece .6s ease-out forwards;animation-delay:var(--d,0s)}
-@keyframes rab-aparece{to{opacity:1}}
 .rab-leg{min-height:3.3em;margin:10px 4px 8px;font:500 22px/1.3 'Caveat',cursive;color:#f1e6cc}
 .rab-leg b{color:#ffd166;font-weight:700}
 .rab-pontos{display:flex;gap:10px;justify-content:center}
 .rab-pontos button{width:11px;height:11px;border-radius:50%;border:0;padding:0;background:#33465f;cursor:pointer}
 .rab-pontos button.on{background:#ffd166}
-@media (prefers-reduced-motion:reduce){
-  .rab-svg path,.rab-svg circle{stroke-dashoffset:0;animation:none!important}
-  .rab-svg text{opacity:1;animation:none!important}
-}
 .ent-info{background:var(--bg2);border:1px solid var(--linha);border-radius:14px;padding:22px;line-height:1.55}
 .ent-info h2{margin:0 0 8px;font:700 20px var(--mono);color:#fff}
 .ent-info p{margin:0 0 10px}
@@ -454,3 +438,33 @@ code.cmd:hover{background:#1f5233!important}
   .ent-logo{font-size:30px;letter-spacing:.22em}
   .ent-info{padding:18px 16px}
 }
+
+/* ilustrações da história (entrada) */
+.ilu{width:100%;height:auto;display:block;border-radius:10px;overflow:hidden}
+.ilu .cena{display:none}
+.ilu .cena.ativa{display:inline}
+.ilu .t-sans{font-family:var(--sans);font-weight:700}
+.ilu .t-mono{font-family:var(--mono);font-weight:700}
+.ilu .t-mao{font-family:'Caveat',cursive;font-weight:700}
+.ilu .cena.ativa > :not(.fundo){animation:ilu-entra .7s cubic-bezier(.2,.8,.3,1) both;animation-delay:var(--d,0s)}
+@keyframes ilu-entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.ilu .olho{transform-box:fill-box;transform-origin:center;animation:ilu-olho 4s infinite}
+@keyframes ilu-olho{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+.ilu .estrela{animation:ilu-brilha 2.6s ease-in-out infinite}
+.ilu .e2{animation-delay:-.9s}.ilu .e3{animation-delay:-1.7s}
+@keyframes ilu-brilha{50%{opacity:.2}}
+.ilu .led{animation:ilu-led 1.1s steps(2) infinite}
+.ilu .l2{animation-delay:-.4s}.ilu .l3{animation-delay:-.75s}
+@keyframes ilu-led{50%{opacity:.15}}
+.ilu .feixe{transform-box:view-box;transform-origin:200px 76px;animation:ilu-feixe 3.6s ease-in-out infinite alternate}
+@keyframes ilu-feixe{from{transform:rotate(-7deg)}to{transform:rotate(7deg)}}
+.ilu .ondas{animation:ilu-ondas 3s linear infinite}.ilu .o2{animation-duration:4.5s}
+@keyframes ilu-ondas{to{transform:translateX(40px)}}
+.ilu .po{animation:ilu-po 5s linear infinite}.ilu .p2{animation-delay:-1.7s}.ilu .p3{animation-delay:-3.4s}
+@keyframes ilu-po{0%{transform:translateY(0);opacity:0}20%{opacity:.8}100%{transform:translateY(-90px);opacity:0}}
+.ilu .etiqueta{transform-box:view-box;transform-origin:219px 118px;animation:ilu-balanca 2.2s ease-in-out infinite alternate}
+@keyframes ilu-balanca{from{transform:rotate(-7deg)}to{transform:rotate(7deg)}}
+.ilu .liga{opacity:0;animation:ilu-liga 1.6s ease-in-out 3s infinite}
+@keyframes ilu-liga{0%,100%{opacity:0}50%{opacity:.75}}
+.ilu .pop{transform-box:fill-box;transform-origin:center}
+@media (prefers-reduced-motion:reduce){.ilu *{animation:none!important}}

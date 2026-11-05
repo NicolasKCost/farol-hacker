@@ -1,4 +1,4 @@
-/* Ecrã de entrada: a história contada em rabiscos que se desenham sozinhos. */
+/* Ecrã de entrada: a história contada em cinco ilustrações animadas. */
 (() => {
   const svg = document.getElementById('rabSvg');
   if (!svg) return;
@@ -8,12 +8,9 @@
   const cenas = [...svg.querySelectorAll('.cena')];
   const DURACAO = 6500;   // tempo de cada desenho, em ms
 
-  // cada traço desenha-se a seguir ao anterior
+  // as peças de cada cena entram uma a seguir à outra
   cenas.forEach(c => {
-    [...c.children].forEach((el, k) => {
-      if (el.tagName !== 'text') el.setAttribute('pathLength', '1');
-      el.style.setProperty('--d', (k * 0.16).toFixed(2) + 's');
-    });
+    [...c.children].forEach((el, k) => el.style.setProperty('--d', (k * 0.12).toFixed(2) + 's'));
   });
 
   pontos.innerHTML = cenas.map((_, k) => `<button type="button" aria-label="Desenho ${k + 1}"></button>`).join('');
