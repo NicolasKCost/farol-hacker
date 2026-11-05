@@ -64,6 +64,17 @@ window.MISSAO = {
 'YUAxMC4wLjAuNwoKQXBhZ2EgaXN0byBkZXBvaXMgZGUgbGVyLgrigJQgTS4K\n',
           'nota.txt': 'Desinstalei o comando base64 deste computador.\nPara ler a mensagem, vais ter de usar Python.\n'
         },
+        '.local': { share: { Trash: { files: {
+          'esconder.py':
+'# apagado por marta em 20/03/2009\n' +
+'import base64\n\n' +
+'with open("mensagem.txt") as f:\n' +
+'    texto = f.read()\n\n' +
+'# codificar: texto -> bytes -> base64\n' +
+'codificado = base64.b64encode(texto.encode("utf-8"))\n\n' +
+'with open(".segredo/mensagem.b64", "w") as f:\n' +
+'    f.write(codificado.decode())\n'
+        } } } },
         '.bash_history':
 'ls\ncd documentos\nnano diario.txt\nmkdir ~/.segredo\npython3 esconder.py\nrm esconder.py\nsudo apt remove base64\nhistory -c\n'
       }
@@ -75,6 +86,16 @@ window.MISSAO = {
     tmp: {}
   },
 
+  // e-mails da Marta; "quando" = facto que faz chegar o e-mail (null = já lá estava)
+  correio: [
+    { id: 'ana', de: 'Ana Reis <ana.reis@sapo.pt>', assunto: 'Domingo?', data: '15/03/2009', quando: null,
+      corpo: 'Marta,\n\nnão atendes o telefone há uma semana. A mãe está preocupada.\nVens almoçar no domingo? Diz qualquer coisa.\n\nBeijinhos,\nAna' },
+    { id: 'rui1', de: 'Rui Matos <rui.matos@vigia.pt>', assunto: 'Registos do FAROL', data: '18/03/2009', quando: null,
+      corpo: 'Marta,\n\nsoube que andaste a ver os registos do servidor FAROL fora de horas.\nIsso não é da tua conta. Os dados dos clientes estão seguros.\n\nAmanhã falamos na minha sala. Às 9h.\n\nRui Matos\nDiretor de Sistemas — Vigia Segurança, Lda.' },
+    { id: 'rui2', de: 'Rui Matos <rui.matos@vigia.pt>', assunto: 'Quem é?', data: 'agora', quando: 'decoded',
+      corpo: 'O computador da Marta voltou a ligar-se à rede.\n\nNão sei quem és, mas sei o que estás a ler.\nDesliga isso. Agora.\n\nR.' }
+  ],
+
   servidor: { ip: '10.0.0.7', user: 'marta', senha: 'farol_obscuro' },
 
   // Cada passo fica concluído quando o "facto" acontece no jogo.
@@ -84,7 +105,7 @@ window.MISSAO = {
       titulo: 'Liga-te ao terminal',
       historia: 'O ecrã é preto, só com texto. Isto é um <b>terminal</b>: em vez de clicar em ícones, escreves comandos.',
       aprende: 'Num terminal escreves um comando e carregas em <kbd>Enter</kbd>. O comando <code>help</code> mostra o que este computador sabe fazer.',
-      tarefa: 'Escreve <code class="cmd">help</code> no terminal (a janela preta de cima) e carrega em <kbd>Enter</kbd>.',
+      tarefa: 'Escreve <code class="cmd">help</code> na janela do <b>Terminal</b> e carrega em <kbd>Enter</kbd>.',
       pista: 'Toca no terminal, escreve as quatro letras h-e-l-p e carrega em Enter. Também podes tocar nos comandos com fundo verde para os escrever automaticamente.'
     },
     {
@@ -120,29 +141,61 @@ window.MISSAO = {
       pista: 'Vais encontrar a pasta <b>.segredo</b> (com o ponto). Entra com <code>cd .segredo</code>, faz <code>ls</code> e depois <code>cat mensagem.b64</code>.'
     },
     {
-      facto: 'decoded',
-      titulo: 'Python ao resgate',
-      historia: 'A mensagem é um amontoado de letras sem sentido: está em <b>base64</b>. E a Marta desinstalou o comando que a lia. Mas este computador tem Python...',
-      aprende: '<b>Base64</b> transforma qualquer dado em letras e números "seguros" para enviar. <b>Não é cifra</b>: não tem chave, qualquer pessoa desfaz. Em Python, o módulo <code>base64</code> faz isso com <code>base64.b64decode()</code>.<br><br>O código no editor <b>Python</b> abre o ficheiro e guarda o texto numa <b>variável</b> (<code>codificado</code>). Falta-lhe uma palavra.',
-      tarefa: 'No editor Python, troca o <code>???</code> pelo nome certo da função e carrega em <b>▶ Executar</b>.',
-      pista: 'A função chama-se <code>b64decode</code>. A linha fica: <code>texto = base64.b64decode(codificado).decode("utf-8")</code>',
+      facto: 'pyCorreu',
+      titulo: 'Corre o teu primeiro programa',
+      historia: 'A mensagem é um monte de letras sem sentido: está <b>disfarçada</b> com uma coisa chamada <b>base64</b>. A Marta apagou o comando que a lia… mas este computador tem <b>Python</b>, uma linguagem para dar ordens ao computador.',
+      aprende: 'Um <b>programa</b> é uma lista de ordens que o computador cumpre de cima para baixo.<br>As linhas que começam por <code>#</code> são notas para pessoas: o computador ignora-as.<br>Este programa já está escrito: abre o ficheiro da mensagem e mostra-o no ecrã com <code>print()</code>.',
+      tarefa: '<ol><li>Vai à janela <b>Python</b> (já está aberta).</li><li>Carrega no botão verde <b>▶ Executar</b>, lá em cima.</li><li>O resultado aparece na parte de baixo da janela.</li></ol>',
+      pista: 'Não precisas de mudar nada no código: só carregar no botão verde <b>▶ Executar</b>. Da primeira vez pode demorar uns segundos (o Python está a ligar-se).',
       codigo:
-'import base64\n\n' +
-'# 1. Abrir o ficheiro escondido e guardar o conteúdo numa variável\n' +
+'# Linhas que começam por # são notas: o computador ignora-as.\n\n' +
+'# 1. Abrir o ficheiro da mensagem e guardar o que lá está\n' +
+'#    numa "caixa" (variável) chamada codificado\n' +
 'with open("/home/marta/.segredo/mensagem.b64") as ficheiro:\n' +
 '    codificado = ficheiro.read()\n\n' +
-'# 2. Descodificar: base64 -> bytes -> texto\n' +
-'#    Troca os pontos de interrogação pelo nome da função que DEScodifica\n' +
+'# 2. Mostrar no ecrã o que está dentro da caixa\n' +
+'print(codificado)\n'
+    },
+    {
+      facto: 'decoded',
+      titulo: 'Tira o disfarce',
+      historia: 'Funcionou: o programa leu a mensagem. Mas ela continua disfarçada. Vamos pedir ao Python para tirar o disfarce.',
+      aprende: '<b>Base64</b> não é segredo a sério, é só um disfarce: qualquer pessoa o desfaz, sem palavra-passe.<br>O Python já traz uma ferramenta para isso, chamada <code>b64decode</code> (<i>decode</i> = descodificar).',
+      tarefa: '<ol><li>Na janela <b>Python</b>, encontra a linha com <code>???</code> (tem uma 👉 por cima).</li><li>Apaga os três pontos de interrogação.</li><li>No lugar deles, escreve <code>b64decode</code></li><li>Carrega em <b>▶ Executar</b>.</li></ol>',
+      pista: 'A linha tem de ficar exatamente assim:<br><code>texto = base64.b64decode(codificado).decode("utf-8")</code><br>Se não conseguires, carrega em <b>✍ Escrever por mim</b> e depois em ▶ Executar.',
+      codigo:
+'import base64\n\n' +
+'with open("/home/marta/.segredo/mensagem.b64") as ficheiro:\n' +
+'    codificado = ficheiro.read()\n\n' +
+'# Tirar o disfarce.\n' +
+'# 👉 Na linha de baixo, troca os 3 pontos de interrogação por b64decode\n' +
 'texto = base64.???(codificado).decode("utf-8")\n\n' +
+'print(texto)\n',
+      solucao:
+'import base64\n\n' +
+'with open("/home/marta/.segredo/mensagem.b64") as ficheiro:\n' +
+'    codificado = ficheiro.read()\n\n' +
+'# Tirar o disfarce.\n' +
+'texto = base64.b64decode(codificado).decode("utf-8")\n\n' +
 'print(texto)\n'
     },
     {
       facto: 'senha',
       titulo: 'Vira a palavra-passe',
-      historia: 'Conseguiste! A Marta deixou uma conta aberta no servidor <b>FAROL</b>. Mas a palavra-passe está escrita ao contrário: <code>orucsbo_loraf</code>.',
-      aprende: 'Em Python, um texto (<i>string</i>) é uma sequência de letras. <code>texto[::-1]</code> percorre-o do fim para o início, ou seja, vira-o ao contrário.<br><br>Experimenta: <code>print("olá"[::-1])</code> mostra <code>álo</code>.',
-      tarefa: 'Escreve no editor um programa que guarde <code>"orucsbo_loraf"</code> numa variável e mostre (<code>print</code>) a palavra virada. Depois executa.',
-      pista: 'Podes apagar tudo no editor e escrever só:<br><code>senha = "orucsbo_loraf"</code><br><code>print(senha[::-1])</code>'
+      historia: 'Conseguiste ler a mensagem! A Marta deixou uma conta aberta no servidor <b>FAROL</b>. Mas a palavra-passe está escrita ao contrário: <code>orucsbo_loraf</code>.',
+      aprende: 'Em Python, <code>[::-1]</code> lê um texto de trás para a frente.<br>Exemplo: <code>"olá"[::-1]</code> dá <code>"álo"</code>.',
+      tarefa: '<ol><li>Na janela <b>Python</b> há um programa novo, com a palavra-passe guardada na caixa <code>senha</code>.</li><li>Na última linha, muda <code>print(senha)</code> para <code>print(senha[::-1])</code></li><li>Carrega em <b>▶ Executar</b> e aponta a palavra que aparecer.</li></ol>',
+      pista: 'Escreve <code>[::-1]</code> logo a seguir a <code>senha</code>, dentro dos parênteses: <code>print(senha[::-1])</code>. Atenção: são dois pontos, dois pontos, menos, um.',
+      codigo:
+'# A palavra-passe da Marta, escrita ao contrário\n' +
+'senha = "orucsbo_loraf"\n\n' +
+'# 👉 Muda a linha de baixo para:  print(senha[::-1])\n' +
+'print(senha)\n',
+      solucao:
+'# A palavra-passe da Marta, escrita ao contrário\n' +
+'senha = "orucsbo_loraf"\n\n' +
+'# [::-1] lê o texto de trás para a frente\n' +
+'print(senha[::-1])\n'
     },
     {
       facto: 'ssh',

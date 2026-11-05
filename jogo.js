@@ -10,7 +10,7 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 /* ---------- estado e gravação ---------- */
-const estadoNovo = () => ({ factos: {}, cwd: M.home, codigo: null, linhas: [], hist: [], inicio: null, fim: null, comecou: false });
+const estadoNovo = () => ({ factos: {}, cwd: M.home, codigo: null, linhas: [], hist: [], lidos: {}, inicio: null, fim: null, comecou: false });
 let E = estadoNovo();
 function carregar() {
   try { const s = JSON.parse(localStorage.getItem(CHAVE)); if (s && typeof s === 'object') E = Object.assign(estadoNovo(), s); } catch (e) {}
@@ -361,7 +361,7 @@ const DICAS = [
 
 async function correr() {
   const src = codigo.value;
-  if (cmd.value.trim() && (src === CODIGO_INICIAL || !M.passos[indiceAtual()] || !['decoded','senha'].includes(M.passos[indiceAtual()].facto))) {
+  if (cmd.value.trim() && (src === CODIGO_INICIAL || !M.passos[indiceAtual()] || !['pyCorreu','decoded','senha'].includes(M.passos[indiceAtual()].facto))) {
     pySaida.innerHTML = '';
     const s = document.createElement('span'); s.className = 'dica';
     s.innerHTML = `💡 Tens <code>${esc(cmd.value.trim())}</code> escrito no <b>terminal</b> (em cima), mas ainda não foi enviado. Clica no terminal e carrega em <kbd>Enter</kbd> — este botão ▶ Executar é só para código Python.`;
@@ -397,7 +397,8 @@ async function correr() {
 }
 
 function verificarPython(out) {
-  if (/10\.0\.0\.7/.test(out) && /orucsbo_loraf/.test(out)) facto('decoded');
+  if (/U2UgZXN0w6Fz/.test(out)) facto('pyCorreu');
+  if (/10\.0\.0\.7/.test(out) && /orucsbo_loraf/.test(out)) { facto('pyCorreu'); facto('decoded'); }
   if (/farol_obscuro/.test(out)) facto('senha');
 }
 
@@ -446,14 +447,16 @@ function facto(nome) {
   if (nome === 'ssh') for (const p of M.passos) E.factos[p.facto] = true;
   const depois = indiceAtual();
   gravar();
+  chegouMail(nome);
   if (depois !== antes) {
     desenharPassos();
     const p = M.passos[depois];
     if (depois >= M.passos.length) { E.fim = E.fim || Date.now(); gravar(); setTimeout(mostrarFim, 900); }
     else {
-      if (p.codigo && (!E.codigo || E.codigo === CODIGO_INICIAL)) porCodigo(p.codigo);
-      if (p.codigo) prepararPython();
-      avisar(`✓ Passo concluído! Próximo: <b>${esc(p.titulo)}</b>`, 'Ver');
+      if (p.codigo) {
+        porCodigo(p.codigo);
+        pySaida.innerHTML = '<span class="dim">O editor tem um programa novo. Lê as notas e carrega em ▶ Executar.</span>'; prepararPython(); if (!WM.aberta('python')) { WM.abrir('python', { semFoco: true }); WM.marcarNovo('python'); } }
+      avisar(`✓ Passo concluído! Próximo: <b>${esc(p.titulo)}</b>`, WM.ativa() === 'notas' ? null : 'Ver notas');
       marcarNovo('missao');
     }
   }
@@ -469,11 +472,12 @@ function desenharPassos() {
       <div class="corpo">
         <p>${p.historia}</p>
         <div class="aprende">${p.aprende}</div>
-        <p class="tarefa">${p.tarefa}</p>
+        <div class="tarefa">${p.tarefa}</div>
         <div class="acoes">
           <button data-acao="pista">💡 Pista</button>
-          ${p.codigo ? '<button data-acao="codigo">↺ Repor código</button>' : ''}
-          ${p.codigo || p.facto === 'senha' ? '<button data-acao="ir-python">🐍 Abrir Python</button>' : '<button data-acao="ir-terminal">&gt;_ Ir ao terminal</button>'}
+          ${p.solucao ? '<button data-acao="solucao">✍ Escrever por mim</button>' : ''}
+          ${p.codigo ? '<button data-acao="codigo">↺ Começar o código de novo</button>' : ''}
+          ${p.codigo ? '<button data-acao="ir-python">🐍 Abrir Python</button>' : '<button data-acao="ir-terminal">&gt;_ Ir ao terminal</button>'}
         </div>
         <div class="pista">${p.pista}</div>
       </div>`);
@@ -496,8 +500,6 @@ olPassos.addEventListener('click', e => {
   const c = e.target.closest('code.cmd');
   if (c) {
     const t = c.textContent.trim();
-    mostrarAba('terminal');
-    cmd.value = t; cmd.focus({ preventScroll: true });
     return;
   }
   const b = e.target.closest('[data-acao]');
@@ -506,6 +508,7 @@ olPassos.addEventListener('click', e => {
     const a = b.dataset.acao;
     if (a === 'pista') li.querySelector('.pista').classList.toggle('ver');
     else if (a === 'codigo') { porCodigo(M.passos[li.dataset.i].codigo); mostrarAba('python'); }
+    else if (a === 'solucao') { porCodigo(M.passos[li.dataset.i].solucao); mostrarAba('python'); avisar('Pronto, o código está escrito. Agora carrega em <b>▶ Executar</b>.'); }
     else if (a === 'ir-python') { mostrarAba('python'); prepararPython(); }
     else if (a === 'ir-terminal') { mostrarAba('terminal'); cmd.focus({ preventScroll: true }); }
     else if (a === 'fim') mostrarFim();
@@ -514,29 +517,134 @@ olPassos.addEventListener('click', e => {
   if (li && li.classList.contains('feito') && e.target.closest('h2')) li.classList.toggle('aberto');
 });
 
-/* ---------- abas (telemóvel) e avisos ---------- */
-const mobil = () => matchMedia('(max-width:820px)').matches;
-let abaAtual = 'missao';
+/* ---------- janelas do ambiente de trabalho ---------- */
+const mobil = WM.mobil;
+const JANELA = { missao: 'notas', terminal: 'terminal', python: 'python' };
 function mostrarAba(a) {
-  abaAtual = a;
-  document.querySelectorAll('.abas button').forEach(b => {
-    b.classList.toggle('ativa', b.dataset.aba === a);
-    if (b.dataset.aba === a) b.classList.remove('novo');
-  });
-  document.querySelectorAll('.painel').forEach(p => p.classList.toggle('visivel', p.id === 'painel-' + a));
-  if (a === 'terminal') setTimeout(rolar, 0);
+  const id = JANELA[a] || a;
+  WM.abrir(id);
+  if (id === 'terminal') setTimeout(rolar, 0);
 }
-function marcarNovo(a) { if (mobil() && abaAtual !== a) document.querySelector(`.abas [data-aba="${a}"]`).classList.add('novo'); }
-document.querySelector('.abas').addEventListener('click', e => { const b = e.target.closest('button'); if (b) mostrarAba(b.dataset.aba); });
+function marcarNovo(a) { WM.marcarNovo(JANELA[a] || a); }
+WM.on((tipo, id) => {
+  if (tipo === 'focar' && id === 'terminal') { setTimeout(rolar, 0); if (!mobil()) cmd.focus({ preventScroll: true }); }
+  if (tipo === 'focar' && id === 'correio') desenharCorreio();
+});
 
-let tAviso = null;
-function avisar(html, botao) {
-  const el = $('#aviso');
-  el.innerHTML = `<span>${html}</span>` + (botao && mobil() ? `<button>${botao}</button>` : '');
-  el.hidden = false;
+function avisar(html, botao, acao, cls) {
+  const box = $('#avisos');
+  const el = document.createElement('div');
+  el.className = 'aviso' + (cls ? ' ' + cls : '');
+  el.innerHTML = `<span>${html}</span>` + (botao ? `<button>${botao}</button>` : '');
   const b = el.querySelector('button');
-  if (b) b.onclick = () => { mostrarAba('missao'); el.hidden = true; };
-  clearTimeout(tAviso); tAviso = setTimeout(() => { el.hidden = true; }, 4500);
+  if (b) b.onclick = () => { el.remove(); (acao || (() => mostrarAba('missao')))(); };
+  box.appendChild(el);
+  while (box.children.length > 3) box.firstChild.remove();
+  setTimeout(() => el.remove(), cls === 'mail' ? 9000 : 5000);
+}
+
+// comandos verdes clicáveis (nas notas e no visualizador) vão para o terminal
+document.addEventListener('click', e => {
+  const c = e.target.closest('code.cmd');
+  if (!c) return;
+  e.stopPropagation();
+  mostrarAba('terminal');
+  cmd.value = c.textContent.trim();
+  cmd.focus({ preventScroll: true });
+}, true);
+
+/* ---------- ícones do ambiente de trabalho ---------- */
+const LIXO = M.home + '/.local/share/Trash/files';
+WM.desenharIcones([['lixo', 'Lixo', 'lixo']]);
+function abrirApp(id) {
+  if (id === 'lixo') { fmIr(LIXO); WM.abrir('ficheiros'); }
+  else if (id === 'ficheiros') { if ($('#win-ficheiros').hidden) fmIr(M.home); WM.abrir('ficheiros'); }
+  else { WM.abrir(id); if (id === 'python') prepararPython(); }
+}
+$('#icones').addEventListener('click', e => { const b = e.target.closest('.icone'); if (b) abrirApp(b.dataset.app); });
+$('#menuApps').addEventListener('click', e => { const b = e.target.closest('button[data-app]'); if (b) abrirApp(b.dataset.app); });
+$('#tarefasMissao').addEventListener('click', () => mostrarAba('missao'));
+
+/* ---------- gestor de ficheiros ---------- */
+let fmDir = M.home;
+const fmOcultos = $('#fmOcultos');
+function tipoIcone(nome, n) {
+  if (ehDir(n)) return nome.startsWith('.') ? 'pastaOculta' : 'pasta';
+  if (n === '\u0000BINARIO') return 'imagem';
+  if (/\.py$/.test(nome)) return 'codigo';
+  return 'texto';
+}
+function fmIr(abs) { fmDir = abs; desenharFM(); }
+function desenharFM() {
+  const n = obter(fmDir);
+  if (!ehDir(n)) { fmDir = M.home; return desenharFM(); }
+  const nome = fmDir === '/' ? '/' : fmDir.split('/').pop();
+  $('#fmTitulo').textContent = (fmDir === LIXO ? 'Lixo' : nome) + ' — Ficheiros';
+  $('#fmCaminho').textContent = fmDir;
+  let itens = Object.keys(n).sort((a, b) => (ehDir(n[b]) - ehDir(n[a])) || a.replace(/^\./, '').localeCompare(b.replace(/^\./, ''), 'pt', { sensitivity: 'base' }));
+  const ocultos = itens.filter(x => x.startsWith('.')).length;
+  if (!fmOcultos.checked) itens = itens.filter(x => !x.startsWith('.'));
+  $('#fmGrelha').innerHTML = itens.length
+    ? itens.map(x => `<button class="fm-item${x.startsWith('.') ? ' oculto-f' : ''}" data-nome="${esc(x)}"><span class="ico">${WM.ICONES[tipoIcone(x, n[x])]}</span>${esc(x)}</button>`).join('')
+    : `<div class="fm-vazio">${fmDir === LIXO ? 'O lixo está vazio.' : 'Esta pasta está vazia.'}</div>`;
+  $('#fmRodape').textContent = `${itens.length} ite${itens.length === 1 ? 'm' : 'ns'}` + (!fmOcultos.checked && ocultos ? ` · ${ocultos} oculto${ocultos > 1 ? 's' : ''} (não aparece${ocultos > 1 ? 'm' : ''})` : '');
+  WM.render();
+}
+$('#fmGrelha').addEventListener('click', e => {
+  const b = e.target.closest('.fm-item'); if (!b) return;
+  const abs = normalizar(b.dataset.nome, fmDir);
+  if (ehDir(obter(abs))) fmIr(abs); else abrirFicheiro(abs);
+});
+$('#fmCima').onclick = () => fmIr(normalizar('..', fmDir));
+$('#fmCasa').onclick = () => fmIr(M.home);
+fmOcultos.onchange = () => { desenharFM(); if (fmOcultos.checked && fmDir === M.home) facto('viuOcultoFM'); };
+$('#win-ficheiros').addEventListener('keydown', e => { if (e.ctrlKey && e.key.toLowerCase() === 'h') { e.preventDefault(); fmOcultos.checked = !fmOcultos.checked; fmOcultos.onchange(); } });
+
+/* ---------- visualizador ---------- */
+function abrirFicheiro(abs) {
+  const n = obter(abs);
+  const nome = abs.split('/').pop();
+  $('#visorTitulo').textContent = nome + ' — Visualizador';
+  const corpo = $('#visorCorpo');
+  if (n === '\u0000BINARIO') {
+    corpo.innerHTML = '<div class="visor-img"><span>⚠ Imagem danificada — só se lê metade.</span></div>';
+    $('#visorDica').innerHTML = '';
+  } else {
+    corpo.textContent = n;
+    $('#visorDica').innerHTML = `💡 Isto é o mesmo que escrever no terminal <code class="cmd">cat ${esc(curto(abs))}</code>` +
+      (/^(LEIA-ME\.txt|diario\.txt|mensagem\.b64)$/.test(nome) ? ' — <b>para avançar na missão, usa o terminal.</b>' : '');
+  }
+  WM.abrir('visor');
+}
+
+/* ---------- correio ---------- */
+const mailsVisiveis = () => M.correio.filter(m => !m.quando || E.factos[m.quando]);
+let mailSel = null;
+function desenharCorreio() {
+  const lidos = E.lidos || (E.lidos = {});
+  const lista = mailsVisiveis().slice().reverse();
+  $('#mailLista').innerHTML = lista.map(m => `<li data-id="${m.id}" class="${lidos[m.id] ? '' : 'nao-lido'}${m.id === mailSel ? ' sel' : ''}">
+    <span class="dt">${esc(m.data)}</span><span class="de">${esc(m.de.split(' <')[0])}</span><span class="ass">${esc(m.assunto)}</span></li>`).join('');
+  const m = M.correio.find(x => x.id === mailSel);
+  $('#win-correio .correio').classList.toggle('lendo', !!m);
+  $('#mailLer').innerHTML = m
+    ? `<button class="mail-voltar">← Caixa de entrada</button><h3>${esc(m.assunto)}</h3><div class="meta">De: ${esc(m.de)}<br>Para: marta.reis@vigia.pt · ${esc(m.data)}</div><div class="corpo-mail">${esc(m.corpo)}</div>`
+    : '<p class="dim">Escolhe uma mensagem.</p>';
+  const porLer = mailsVisiveis().filter(x => !lidos[x.id]).length;
+  if (porLer) WM.marcarNovo('correio');
+}
+$('#mailLista').addEventListener('click', e => {
+  const li = e.target.closest('li'); if (!li) return;
+  mailSel = li.dataset.id; (E.lidos || (E.lidos = {}))[mailSel] = true; gravar(); desenharCorreio();
+});
+$('#mailLer').addEventListener('click', e => { if (e.target.closest('.mail-voltar')) { mailSel = null; desenharCorreio(); } });
+function chegouMail(nomeFacto) {
+  for (const m of M.correio) if (m.quando === nomeFacto) {
+    setTimeout(() => {
+      desenharCorreio(); WM.marcarNovo('correio');
+      avisar(`✉ <b>Novo e-mail</b> de ${esc(m.de.split(' <')[0])}: “${esc(m.assunto)}”`, 'Abrir', () => { mailSel = m.id; (E.lidos || (E.lidos = {}))[m.id] = true; gravar(); abrirApp('correio'); desenharCorreio(); }, 'mail');
+    }, 4000);
+  }
 }
 
 /* ---------- ecrãs inicial e final ---------- */
@@ -557,18 +665,34 @@ $('#btnPartilhar').onclick = async () => {
   } catch (e) {}
 };
 
+function abrirJanelasIniciais() {
+  // no telemóvel começa pelas notas; no computador, notas + terminal lado a lado
+  if (indiceAtual() >= 5 || E.factos.b64) WM.abrir('python', { semFoco: true });
+  if (mobil()) WM.abrir('notas');
+  else { WM.abrir('notas', { semFoco: true }); WM.abrir('terminal'); }
+}
+
 async function arrancar(novo) {
   $('#ecraIntro').hidden = true;
   if (novo || !E.comecou) {
     E = estadoNovo(); E.comecou = true; E.inicio = Date.now();
-    saida.innerHTML = ''; ssh = null;
+    saida.innerHTML = ''; ssh = null; mailSel = null;
+    document.querySelectorAll('.janela').forEach(w => { w.hidden = true; w.classList.remove('min', 'max', 'ativa'); delete w.dataset.posto; });
     porCodigo(CODIGO_INICIAL);
-    desenharPassos(); atualizarPrompt();
+    desenharPassos(); atualizarPrompt(); fmOcultos.checked = false; fmIr(M.home); desenharCorreio();
     ocupado = true;
+    $('#splash').hidden = false;
+    await espera(1400);
+    $('#splash').hidden = true;
+    WM.relogio(E.inicio);
+    abrirJanelasIniciais();
     if (!mobil()) cmd.focus({ preventScroll: true });
     for (const [t, c] of M.boot) { linha(t, c); await espera(220); }
     ocupado = false;
     gravar();
+  } else {
+    WM.relogio(E.inicio);
+    abrirJanelasIniciais();
   }
   if (!mobil()) cmd.focus({ preventScroll: true });
 }
@@ -584,10 +708,10 @@ $('#btnRecomecar').onclick = () => {
 /* ---------- início ---------- */
 carregar();
 $('#introTexto').innerHTML = M.intro.map(p => `<p>${p}</p>`).join('');
-$('#tituloMissao').textContent = `Missão ${M.numero} · ${M.titulo}`;
+$('#tituloMissao').textContent = M.titulo; $('#numMissao').textContent = M.numero;
 for (const [t, c] of E.linhas) linha(t, c, true, false);
-porCodigo(E.codigo || CODIGO_INICIAL);
-desenharPassos(); atualizarPrompt(); mostrarAba('missao');
+porCodigo(E.codigo || (M.passos[indiceAtual()] || {}).codigo || CODIGO_INICIAL);
+desenharPassos(); atualizarPrompt(); desenharFM(); desenharCorreio(); WM.render();
 if (E.comecou) {
   $('#btnComecar').textContent = 'Continuar';
   $('#btnDoZero').hidden = false;

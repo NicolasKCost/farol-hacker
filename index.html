@@ -7,38 +7,55 @@
 <meta name="description" content="Jogo no navegador, em português: aprende segurança informática e Python a investigar um computador velho. Grátis, sem instalar nada.">
 <meta property="og:title" content="FAROL · Missão 1: O computador do sótão">
 <meta property="og:description" content="Compraste um computador velho na Feira da Ladra. Há uma mensagem escondida lá dentro. Aprende terminal e Python para a ler.">
-<meta name="theme-color" content="#0b0f0c">
+<meta name="theme-color" content="#0c1624">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0f0c'/%3E%3Ctext x='5' y='23' font-family='monospace' font-size='18' font-weight='700' fill='%2339ff88'%3E%3E_%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=3">
+<link rel="stylesheet" href="style.css?v=6">
 </head>
 <body>
 
-<header class="topo">
-  <div class="marca"><span class="logo">&gt;_</span> <b id="nomeJogo">FAROL</b> <span class="sep">/</span> <span id="tituloMissao">Missão 1</span></div>
-  <div class="progresso" aria-label="Progresso da missão">
-    <div class="barra"><i id="barra"></i></div>
-    <span id="contaPassos">0/8</span>
+<!-- ===== Ambiente de trabalho ===== -->
+<main class="ambiente" id="ambiente">
+  <div class="fundo" aria-hidden="true">
+    <svg class="farol-svg" viewBox="0 0 220 320" preserveAspectRatio="xMidYMax meet">
+      <defs>
+        <linearGradient id="gFeixe" x1="0" x2="1">
+          <stop offset="0" stop-color="#fff6c8" stop-opacity=".55"/>
+          <stop offset="1" stop-color="#fff6c8" stop-opacity="0"/>
+        </linearGradient>
+        <radialGradient id="gLuz"><stop offset="0" stop-color="#fff3b0"/><stop offset="1" stop-color="#fff3b0" stop-opacity="0"/></radialGradient>
+      </defs>
+      <g class="feixe"><polygon points="110,62 640,20 640,104" fill="url(#gFeixe)"/></g>
+      <circle cx="110" cy="62" r="26" fill="url(#gLuz)"/>
+      <path d="M0 320 L0 292 Q30 270 60 282 Q80 262 110 270 Q150 258 175 278 Q200 272 220 286 L220 320Z" fill="#05090f"/>
+      <polygon points="96,270 124,270 119,84 101,84" fill="#d9d4c7"/>
+      <polygon points="98.6,220 121.4,220 120.6,190 99.4,190" fill="#9e3b32"/>
+      <polygon points="100.3,150 119.7,150 119.1,122 100.9,122" fill="#9e3b32"/>
+      <rect x="97" y="78" width="26" height="7" fill="#2b2f36"/>
+      <rect x="102" y="56" width="16" height="22" fill="#ffe9a0"/>
+      <path d="M100 56 L110 44 L120 56Z" fill="#2b2f36"/>
+      <rect x="99" y="54" width="22" height="3" fill="#2b2f36"/>
+    </svg>
+    <div class="mar"></div>
   </div>
-  <button class="btn-txt" id="btnRecomecar" title="Recomeçar a missão">↺ Recomeçar</button>
-</header>
 
-<nav class="abas" role="tablist">
-  <button role="tab" data-aba="missao" class="ativa">📋 Missão</button>
-  <button role="tab" data-aba="terminal">&gt;_ Terminal</button>
-  <button role="tab" data-aba="python">🐍 Python</button>
-</nav>
+  <nav class="icones" id="icones" aria-label="Ícones do ambiente de trabalho"></nav>
 
-<main class="jogo">
-  <section class="painel painel-missao" id="painel-missao">
-    <ol class="passos" id="passos"></ol>
+  <!-- Notas (missão) -->
+  <section class="janela" id="win-notas" hidden>
+    <header class="jt"><span class="jt-ico"></span><span class="jt-tit">missao.txt — Notas</span><span class="jt-bts"><button data-w="min" title="Minimizar">–</button><button data-w="max" title="Maximizar">□</button><button data-w="fechar" title="Fechar">×</button></span></header>
+    <div class="jc notas">
+      <div class="notas-cab">Missão <span id="numMissao">1</span> · <span id="tituloMissao">O computador do sótão</span></div>
+      <ol class="passos" id="passos"></ol>
+    </div>
   </section>
 
-  <div class="direita">
-    <section class="painel painel-terminal" id="painel-terminal">
-      <div class="barra-janela"><span class="pontos"><i></i><i></i><i></i></span> <span id="tituloTerm">marta@sotao: ~</span></div>
+  <!-- Terminal -->
+  <section class="janela" id="win-terminal" hidden>
+    <header class="jt"><span class="jt-ico"></span><span class="jt-tit" id="tituloTerm">marta@sotao: ~</span><span class="jt-bts"><button data-w="min" title="Minimizar">–</button><button data-w="max" title="Maximizar">□</button><button data-w="fechar" title="Fechar">×</button></span></header>
+    <div class="jc term-jc">
       <div class="term" id="term" aria-live="polite">
         <div id="saida"></div>
         <form class="linha" id="formCmd" autocomplete="off">
@@ -56,24 +73,85 @@
         <button data-t="cd ..">cd ..</button>
         <button data-t="cat ">cat</button>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="painel painel-python" id="painel-python">
-      <div class="barra-janela">
-        <span class="pontos"><i></i><i></i><i></i></span> <span>script.py</span>
-        <span class="py-estado" id="pyEstado">Python ainda não carregado</span>
+  <!-- Python -->
+  <section class="janela" id="win-python" hidden>
+    <header class="jt"><span class="jt-ico"></span><span class="jt-tit">script.py — Editor Python</span><span class="jt-bts"><button data-w="min" title="Minimizar">–</button><button data-w="max" title="Maximizar">□</button><button data-w="fechar" title="Fechar">×</button></span></header>
+    <div class="jc py-jc">
+      <div class="py-barra">
         <button class="btn-run" id="btnRun" title="Executar (Ctrl+Enter)">▶ Executar</button>
+        <span class="py-estado" id="pyEstado">Python ainda não carregado</span>
       </div>
       <div class="editor">
         <pre class="numeros" id="numeros" aria-hidden="true">1</pre>
         <textarea id="codigo" spellcheck="false" autocapitalize="off" autocorrect="off" aria-label="Editor de código Python"></textarea>
       </div>
       <div class="py-saida" id="pySaida"><span class="dim">A saída do teu programa aparece aqui.</span></div>
-    </section>
-  </div>
+    </div>
+  </section>
+
+  <!-- Gestor de ficheiros -->
+  <section class="janela" id="win-ficheiros" hidden>
+    <header class="jt"><span class="jt-ico"></span><span class="jt-tit" id="fmTitulo">marta — Ficheiros</span><span class="jt-bts"><button data-w="min" title="Minimizar">–</button><button data-w="max" title="Maximizar">□</button><button data-w="fechar" title="Fechar">×</button></span></header>
+    <div class="jc fm">
+      <div class="fm-barra">
+        <button id="fmCima" title="Pasta de cima">↑</button>
+        <button id="fmCasa" title="Pasta pessoal">⌂</button>
+        <span class="fm-caminho" id="fmCaminho">/home/marta</span>
+        <label class="fm-ocultos"><input type="checkbox" id="fmOcultos"> Mostrar ocultos</label>
+      </div>
+      <div class="fm-grelha" id="fmGrelha"></div>
+      <div class="fm-rodape" id="fmRodape"></div>
+    </div>
+  </section>
+
+  <!-- Visualizador de ficheiros -->
+  <section class="janela" id="win-visor" hidden>
+    <header class="jt"><span class="jt-ico"></span><span class="jt-tit" id="visorTitulo">Visualizador</span><span class="jt-bts"><button data-w="min" title="Minimizar">–</button><button data-w="max" title="Maximizar">□</button><button data-w="fechar" title="Fechar">×</button></span></header>
+    <div class="jc visor">
+      <div class="visor-corpo" id="visorCorpo"></div>
+      <div class="visor-dica" id="visorDica"></div>
+    </div>
+  </section>
+
+  <!-- Correio -->
+  <section class="janela" id="win-correio" hidden>
+    <header class="jt"><span class="jt-ico"></span><span class="jt-tit">Caixa de entrada — Correio</span><span class="jt-bts"><button data-w="min" title="Minimizar">–</button><button data-w="max" title="Maximizar">□</button><button data-w="fechar" title="Fechar">×</button></span></header>
+    <div class="jc correio">
+      <ul class="mail-lista" id="mailLista"></ul>
+      <article class="mail-ler" id="mailLer"><p class="dim">Escolhe uma mensagem.</p></article>
+    </div>
+  </section>
 </main>
 
-<div class="aviso" id="aviso" hidden></div>
+<!-- ===== Barra de tarefas ===== -->
+<footer class="tarefas" id="tarefas">
+  <button class="menu-btn" id="menuBtn" aria-haspopup="true">◉ <span>Aplicações</span></button>
+  <div class="tarefas-lista" id="tarefasLista"></div>
+  <button class="tarefas-missao" id="tarefasMissao" title="Progresso da missão">
+    <span class="tm-txt">Missão 1</span>
+    <span class="barra"><i id="barra"></i></span>
+    <span id="contaPassos">0/8</span>
+  </button>
+  <span class="relogio" id="relogio">sex 23:58</span>
+</footer>
+
+<div class="menu" id="menu" hidden>
+  <div id="menuApps"></div>
+  <hr>
+  <button id="btnRecomecar">↺ Recomeçar a missão</button>
+  <a href="https://github.com/NicolasKCost/farol-hacker" target="_blank" rel="noopener">ⓘ Sobre o FAROL</a>
+</div>
+
+<div class="avisos" id="avisos"></div>
+
+<!-- Arranque -->
+<div class="splash" id="splash" hidden>
+  <div class="splash-logo">sotao</div>
+  <div class="splash-pontos"><i></i><i></i><i></i><i></i><i></i></div>
+</div>
 
 <!-- Ecrã inicial -->
 <div class="ecra" id="ecraIntro">
@@ -104,13 +182,14 @@
     <p>A missão 2 ainda está a ser escrita. Se gostaste, partilha com alguém que queira aprender — é isso que decide se o jogo continua.</p>
     <div class="botoes">
       <button class="btn" id="btnPartilhar">Partilhar o jogo</button>
-      <button class="btn alt" id="btnFechar">Voltar ao terminal</button>
+      <button class="btn alt" id="btnFechar">Voltar ao computador</button>
     </div>
     <p class="mini">Feito por <a href="https://nicolaskcost.github.io" target="_blank" rel="noopener">Nicolas Kaiky Costa</a>.</p>
   </div>
 </div>
 
-<script src="missoes/missao1.js?v=3"></script>
-<script src="jogo.js?v=3"></script>
+<script src="missoes/missao1.js?v=6"></script>
+<script src="ambiente.js?v=6"></script>
+<script src="jogo.js?v=6"></script>
 </body>
 </html>
