@@ -329,13 +329,13 @@ function pararAtaque() { clearInterval(ataque); ataque = null; }
       aprende: 'Quando alguém acerta na palavra-passe, o servidor escreve <b>Accepted password</b> (palavra-passe aceite).<br>O <code>grep</code> também procura <b>frases</b>: basta pô-las entre aspas.',
       tarefa: '<ol><li>Volta ao <b>Terminal</b> (barra de tarefas, em baixo).</li><li>Escreve <code class="cmd">grep "Accepted password for marta" auth.log</code> e carrega em Enter.</li><li>Olha para os endereços IP: quase todos são iguais… menos um.</li></ol>',
       pista: 'Toca no comando verde, aqui nas notas: ele vai sozinho para o terminal, com as aspas. Depois é só carregar em Enter.',
-      feito: 'Quase todas as entradas da Marta vieram de <b>10.0.0.23</b> — o computador dela, este onde estás (viste esse endereço quando ele arrancou). Menos uma: <b>20 de março às 03:14:07, de 10.0.0.66</b>, logo a seguir às 612 falhas.<br>O atacante acertou na palavra-passe e entrou na conta da Marta.<br>E agora… repara no terminal. Alguém está a bater à porta.'
+      feito: 'Quase todas as entradas da Marta vieram de <b>10.0.0.23</b> — o computador dela, este onde estás (viste esse endereço quando ele arrancou). Menos uma: <b>20 de março às 03:14:07, de 10.0.0.66</b>, logo a seguir às 612 falhas.<br>O atacante acertou na palavra-passe e entrou na conta da Marta.<br>Até aqui estiveste a ler o <b>passado</b>: um registo de 20 de março. Carrega em <b>Continuar</b>: há uma coisa a acontecer <b>agora mesmo</b>.'
     },
     {
       facto: 'bloqueou',
       abre: 'terminal',
       titulo: 'Defende-te!',
-      historia: 'O mesmo endereço, <b>10.0.0.66</b>, está agora a tentar entrar <b>neste computador</b> — vês as tentativas a aparecer no terminal, a vermelho. É o mesmo ataque, outra vez à conta da Marta.',
+      historia: '<b>Isto está a acontecer agora.</b> O mesmo <b>10.0.0.66</b> está a tentar entrar <b>neste computador</b>, o do sótão, onde estás. Ninguém está a usar uma chave na porta: é um programa que experimenta palavras-passe, uma atrás da outra.<br><b>Onde se vê:</b> abre o <b>Terminal</b>. A cada 2 segundos aparece lá uma <b>linha vermelha nova</b>, a começar por <b>⚠ AGORA</b>. Cada linha é <b>uma tentativa</b>, com o número da tentativa no fim. São iguais às do registo (<i>Failed password for marta from 10.0.0.66</i>), mas dizem <b>sotao</b> em vez de <b>farol</b>, porque o alvo agora é este computador.<br>Se o deixares continuar, mais cedo ou mais tarde acerta, como acertou no FAROL à tentativa 613.',
       aprende: 'Uma <b>firewall</b> é como um porteiro: decide quem pode entrar no computador pela rede. Se lhe deres o endereço do atacante, ela fecha-lhe a porta.<br>Neste computador, o comando é <code>firewall bloquear &lt;ip&gt;</code>. Num Linux a sério usarias, por exemplo, <code>sudo ufw deny from &lt;ip&gt;</code>.',
       tarefa: '<ol><li>No <b>Terminal</b>, escreve <code class="cmd">firewall bloquear 10.0.0.66</code> e carrega em Enter.</li><li>Se quiseres confirmar, <code class="cmd">firewall lista</code> mostra as regras ativas.</li></ol>',
       pista: 'Escreve: firewall, espaço, bloquear, espaço, 10.0.0.66. Os pontos do endereço contam.'
@@ -379,12 +379,15 @@ function pararAtaque() { clearInterval(ataque); ataque = null; }
   aoEntrarPasso(p, api) {
     if (p.facto !== 'bloqueou' || ataque || api.estado().factos.bloqueou) return;
     api.linha('', '');
-    api.linha('[!] ALERTA: muitas tentativas de login falhadas a chegar a ESTE computador!', 'erro');
+    api.linha('[!] ALERTA: o 10.0.0.66 está a tentar entrar NESTE computador, agora mesmo.', 'erro');
+    api.linha('    Cada linha vermelha que aparecer a seguir é uma tentativa de adivinhar a palavra-passe da Marta.', 'erro');
     api.avisar('⚠ <b>Alerta:</b> alguém está a tentar entrar neste computador. Vê o Terminal!');
+    // pôr o Terminal à frente, para as tentativas se verem logo
+    setTimeout(() => { if (window.WM) WM.abrir('terminal'); }, 300);
     let porta = 40211, n = 0;
     ataque = setInterval(() => {
       if (++n > 80) return pararAtaque();
-      api.linha(`⚠ sotao sshd: Failed password for marta from 10.0.0.66 port ${porta++} ssh2`, 'erro');
+      api.linha(`⚠ AGORA  sotao sshd: Failed password for marta from 10.0.0.66 port ${porta++} ssh2   (tentativa ${n})`, 'erro');
     }, 1800);
   },
 
