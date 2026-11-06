@@ -303,6 +303,7 @@ function executar(texto) {
   if (f) f(args);
   else if (comandos[nome.toLowerCase()]) linha(`bash: ${nome}: comando não encontrado. Os comandos escrevem-se em minúsculas: ${nome.toLowerCase()}`, 'erro');
   else linha(`bash: ${nome}: comando não encontrado. Escreve help para ver os comandos.`, 'erro');
+  if (!f) window.FarolStats && FarolStats.ev('erro_cmd', { d: t.slice(0, 60) });
   gravar();
 }
 
@@ -450,6 +451,7 @@ async function correr() {
       mostrarCaixas(p, ns);
     } catch (err) {
       const msg = String(err.message || err);
+      { const ult = msg.trim().split('\n').pop() || ''; window.FarolStats && FarolStats.ev('erro_py', { d: ult.slice(0, 100) }); }
       const linhas = msg.trim().split('\n');
       // mostrar só a parte útil do traceback (sem as linhas internas do Pyodide)
       const ini = linhas.findIndex(l => l.includes('File "<exec>"'));
@@ -462,7 +464,7 @@ async function correr() {
       const passo = M.passos[indiceAtual()];
       if (passo && passo.solucao) {
         const b = document.createElement('button'); b.className = 'btn-corrigir'; b.textContent = '✍ Corrigir por mim';
-        b.onclick = () => { porCodigo(passo.solucao); pySaida.innerHTML = '<span class="dica">✓ Código corrigido. Vê o que mudou e carrega em ▶ Executar.</span>'; };
+        b.onclick = () => { window.FarolStats && FarolStats.ev('corrigir'); porCodigo(passo.solucao); pySaida.innerHTML = '<span class="dica">✓ Código corrigido. Vê o que mudou e carrega em ▶ Executar.</span>'; };
         pySaida.appendChild(b);
       }
     } finally { ns.destroy(); }
@@ -586,6 +588,10 @@ function facto(nome) {
   const depois = indiceAtual();
   gravar();
   chegouMail(nome);
+  if (window.FarolStats) {
+    for (let k = antes; k < depois; k++) FarolStats.passo(saltando ? 'saltou' : 'passo', M.numero, k, M.passos[k].facto);
+    if (antes < M.passos.length && depois >= M.passos.length) FarolStats.ev('fim', { m: M.numero, i: M.passos.length - 1, f: 'fim', ms: Date.now() - (E.inicio || Date.now()) });
+  }
   if (depois !== antes) {
     const feito = M.passos[antes];
     // passos de Python: parar para a pessoa ver o resultado e ler o que aconteceu
@@ -677,11 +683,11 @@ olPassos.addEventListener('click', e => {
   const li = e.target.closest('.passo');
   if (b) {
     const a = b.dataset.acao;
-    if (a === 'pista') li.querySelector('.pista').classList.toggle('ver');
+    if (a === 'pista') { const ver = li.querySelector('.pista').classList.toggle('ver'); if (ver) window.FarolStats && FarolStats.ev('pista'); }
     else if (a === 'codigo') { porCodigo(M.passos[li.dataset.i].codigo); mostrarAba('python'); }
     else if (a === 'saltar') { saltando = true; facto(M.passos[li.dataset.i].facto); saltando = false; }
     else if (a === 'continuar') continuar();
-    else if (a === 'solucao') { porCodigo(M.passos[li.dataset.i].solucao); mostrarAba('python'); avisar('Pronto, o código está escrito. Agora carrega em <b>▶ Executar</b>.'); }
+    else if (a === 'solucao') { window.FarolStats && FarolStats.ev('solucao'); porCodigo(M.passos[li.dataset.i].solucao); mostrarAba('python'); avisar('Pronto, o código está escrito. Agora carrega em <b>▶ Executar</b>.'); }
     else if (a === 'ir-python') { mostrarAba('python'); prepararPython(); }
     else if (a === 'ir-terminal') { mostrarAba('terminal'); cmd.focus({ preventScroll: true }); }
     else if (a === 'fim') mostrarFim();
@@ -904,6 +910,7 @@ async function abrirPorPrograma() {
 
 async function arrancar(novo, jaLigado = false) {
   $('#ecraIntro').hidden = true;
+  if (window.FarolStats) { FarolStats.ev(jaLigado ? 'seguiu' : (novo || !E.comecou) ? 'ligou' : 'continuou'); FarolStats.recomecarRelogio(); }
   if (novo || !E.comecou) {
     E = estadoNovo(); E.comecou = true; E.inicio = Date.now();
     saida.innerHTML = ''; ssh = null; mailSel = null;
@@ -960,6 +967,10 @@ $('#missoesLista').addEventListener('click', e => {
   if (b.classList.contains('fechada')) { avisar(`🔒 Termina primeiro a missão ${n - 1}.`); return; }
   location.href = location.pathname + '?m=' + n;
 });
+if (window.FarolStats) {
+  FarolStats.contexto(() => { const i = indiceAtual(); return { m: M.numero, i: Math.min(i, M.passos.length - 1), f: (M.passos[i] || {}).facto || '' }; });
+  if (!new URLSearchParams(location.search).get('seguir')) FarolStats.ev('abriu', { d: E.comecou ? 'com progresso' : 'novo' });
+}
 for (const [t, c] of E.linhas) linha(t, c, true, false);
 porCodigo(E.codigo || (M.passos[indiceAtual()] || {}).codigo || CODIGO_INICIAL);
 desenharPassos(); atualizarPrompt(); desenharFM(); desenharCorreio(); WM.render();
